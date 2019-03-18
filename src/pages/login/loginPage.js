@@ -65,18 +65,19 @@ export class SignInScreen extends React.Component {
               />
             </View>
             <View style={styles.forgetPwd}>
-              <Text onPress={this._forgetPwd}>忘记密码?</Text>
+              <Text onPress={this._forgetPwd} style={{color:'#6078ea'}}>忘记密码?</Text>
             </View>
             {/*<Button style={styles.loginBtn} title="登录" onPress={this._signInAsync} />*/}
-            <View style={styles.linearGradient} onPress={this._signInAsync}>
-              <Text style={styles.loginBtn}>登录</Text>
-            </View>
             {/*<LinearGradient colors={['#09B6FD', '#6078EA']} style={styles.linearGradient}>
               <Text style={{color:'#fff'}} onPress={this._signInAsync}> 登录 </Text>
             </LinearGradient>*/}
-
-
+            <View style={{alignItems:'center'}}>
+              <View style={styles.linearGradient} onPress={this._signInAsync}>
+                <Text style={styles.loginBtn}>登录</Text>
+              </View>
+            </View>
           </View>
+
         </ImageBackground>
 
       </View>
@@ -104,7 +105,7 @@ const styles = StyleSheet.create({
     color:'#ffffff',
     fontSize:18,
     position:'relative',
-    top:-45,
+    top:-35,
     left:0,
   },
   inputUserInfo:{
@@ -120,8 +121,9 @@ const styles = StyleSheet.create({
     },
   login: {
     width: 325,
-    height: 325,
+    height: 267,
     borderStyle: 'solid',
+    marginBottom:70,
     // borderColor: 'red',
     //  borderWidth: 2,
     borderRadius:5,
@@ -150,12 +152,13 @@ const styles = StyleSheet.create({
   linearGradient: {
     justifyContent:'center',
     alignItems:'center',
-    width:'90%',
+    width:'80%',
     height:50,
     paddingLeft: 15,
     paddingRight: 15,
     borderRadius: 25,
     backgroundColor:'#6078ea',
+    marginTop:35,
   },
   loginBtn:{
     color:'#ffffff',
