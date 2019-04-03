@@ -11,6 +11,7 @@ import { createStackNavigator, createSwitchNavigator, createAppContainer, create
 import { AuthLoadingScreen } from '../pages/login/AuthLoadingScreen' // 登陆前的loading
 import { SignInScreen } from '../pages/login/loginPage' // 登陆页面
 import { FindAccountPage } from '../pages/login/findAccountPage' // 找回密码页面
+// import { AppStack } from './Main' // 主APP页面
 import { AppStack } from './Main' // 主APP页面
 
 
