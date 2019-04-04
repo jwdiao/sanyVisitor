@@ -14,13 +14,13 @@ import {
 
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import Header from '../../components/Header'
-// import { setStatusBar } from './StatusBar'
+import { setStatusBar } from './StatusBar'
 import {px2dp} from "../../utils/ScreenUtil";
-/*@setStatusBar({
+@setStatusBar({
   barStyle: 'light-content',
   translucent: true,
   backgroundColor: 'transparent'
-})*/
+})
 
 export class TestScreen extends React.PureComponent {
   // static navigationOptions = {

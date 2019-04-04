@@ -95,7 +95,7 @@ export class SignInScreen extends React.Component {
       <View style={styles.loginContainer}>
         <View style={styles.login}>
           <Text style={styles.title}>登录</Text>
-            <View>
+            <View style={styles.inputFlex}>
               {/*<Image source={require('./images/username_icon.png')} style={styles.userIcon} />*/}
               <FontAwesome color='#09B6FD' name={'user'} size={24} style={styles.userIcon}/>
               <TouchableOpacity  style={styles.userRightIcon} onPress={this._clearUserName}>{v}</TouchableOpacity >
@@ -105,7 +105,7 @@ export class SignInScreen extends React.Component {
                          onChangeText={this._onChangeText}//输入框改变触发的函数
                          placeholder="请输入域名或手机号"/>
             </View>
-            <View>
+            <View  style={styles.inputFlex}>
               {/*<Image source={require('./images/password.png')} style={styles.userIconPwd}/>*/}
               <Ionicons color='#09B6FD' name={'ios-lock'} size={24} style={styles.userIconPwd}/>
               <TouchableOpacity style={styles.userIconPwdEye} onPress={this._toggleIsShowPwd}>{isShowPassword}</TouchableOpacity>
@@ -117,22 +117,23 @@ export class SignInScreen extends React.Component {
             <View style={styles.forgetPwd}>
               <Text onPress={this._forgetPwd} style={{color:'#468BD9'}}>忘记密码?</Text>
             </View>
-          {/*登录按钮*/}
-          <View style={{alignItems:'center',zIndex:10000}} >
-            <LinearGradient colors={['#09B6FD', '#6078EA']} start={{x:0,y:0}} end={{x:1,y:0}} style={styles.linearGradient}>
-              <TouchableNativeFeedback onPress={this._signInAsync}>
-                <View style={styles.linearGradientView}>
-                  <Text style={styles.loginBtn}>登录</Text>
-                </View>
-              </TouchableNativeFeedback>
-            </LinearGradient>
-          </View>
+
+        </View>
+        {/*登录按钮*/}
+        <View style={{alignItems:'center',zIndex:10000,marginTop:-25,paddingHorizontal:16,paddingVertical:0,elevation: 11,}} >
+          <LinearGradient colors={['#09B6FD', '#6078EA']} start={{x:0,y:0}} end={{x:1,y:0}} style={styles.linearGradient}>
+            <TouchableOpacity onPress={this._signInAsync}>
+              <View style={styles.linearGradientView}>
+                <Text style={styles.loginBtn} >登录</Text>
+              </View>
+            </TouchableOpacity>
+          </LinearGradient>
         </View>
       </View>
 
       {/*登录失败模态框*/}
       <View>
-        <Modal animationType='fade' presentationStyle='formSheet' visible={this.state.modalVisible}
+        <Modal animationType='fade' transparent maskClosable visible={this.state.modalVisible}
                 onRequestClose={()=>{alert('modal closeed')}}>
           <View style={styles.containerModal}>
             <View style={{width:width*0.8,height:height*0.35,backgroundColor:'#fff',justifyContent:'center',alignItems:'center',borderRadius:10,}}>
@@ -176,11 +177,18 @@ export class SignInScreen extends React.Component {
       .then((responseJSON) =>{
       console.warn('qingqiuchenggong:',responseJSON)
     })*/
-    /*fetch封装----https*/
-    LoginRequest(formData).then(res=>{
-      console.warn('res:',res)
+    /*fetch封装----*/
+    LoginRequest(formData).then(res=> {
+     /* if(res&&res.code===200){
+        this.props.navigation.navigate('Main');
+      }*/
+      this.props.navigation.navigate('Main');
+    }).catch(res=>{
+      // 登录失败时，弹出模态框
+      this.setState({modalVisible:true})
     })
-    /*axios请求*/
+
+    /*axios封装----*/
      /*LoginRequest(formData).then(res => {
       this.props.navigation.navigate('Main');
       // console.log('ppp:',res)
@@ -206,19 +214,20 @@ const styles = StyleSheet.create({
     alignItems: 'center', // 水平居中
   },
   logoTitle:{ color:'#ffffff',fontSize:18},
-  userIcon:{  position:'absolute', top:40,left:10,},
-  userIconPwd:{ position:'absolute', top:40,left:10,},
-  userIconPwdEye:{ position:'absolute', top:40,left:250,zIndex:100},
-  userRightIcon:{ position:'absolute', top:40,left:250, zIndex:100, },
-  inputUserInfo:{ borderBottomWidth:1,borderBottomColor:'#D3DFEF', paddingLeft:30, paddingRight:50,marginTop:30},
-  title:{  fontSize:23, color:'#3e4a59', paddingLeft:10,  marginBottom:-10,},
-  login: {width: width*0.8, height: height*0.4,borderStyle: 'solid', marginTop:-30, borderRadius:5, backgroundColor:'#ffffff',
-    //注意：这一句是可以让安卓拥有灰色阴影
-    elevation: 10, paddingHorizontal:16,paddingVertical:23,},
-  forgetPwd: { marginTop: 10, flex: 1, alignItems: 'flex-end',marginBottom:35},
+  userIcon:{  position:'absolute', top:height*0.1*0.55,left:10,},
+  userIconPwd:{ position:'absolute', top:height*0.1*0.55,left:10,},
+  userIconPwdEye:{ position:'absolute', top:height*0.1*0.55,left:width*0.6,zIndex:100},
+  userRightIcon:{ position:'absolute', top:height*0.1*0.55,left:width*0.6, zIndex:100, },
+  inputUserInfo:{ borderBottomWidth:1,borderBottomColor:'#D3DFEF',height:height*0.7*0.1, paddingLeft:30, paddingRight:50,marginTop:height*0.4*0.1},
+  title:{  fontSize:23, color:'#3e4a59', paddingLeft:10,  marginBottom:-height*0.2*0.1,},
+  login: {width: width*0.8, height: height*0.4,borderStyle: 'solid', marginTop:-height*0.4*0.1, borderRadius:5, backgroundColor:'#ffffff',
+    //注意：这一句是可以让安卓拥有灰色阴影  elevation: 10, paddingHorizontal:16,paddingVertical:23,
+     paddingHorizontal:16,paddingVertical:23,elevation: 10,},
+  inputFlex:{flex:1,marginBottom:height*0.5*0.2},
+  forgetPwd: { marginTop: height*0.4*0.1, flex: 1, alignItems: 'flex-end',marginBottom:height*0.6*0.1},
   loginContainer: {justifyContent:'center',alignItems:'center',},
   backgroundImage:{width:width, height:height*0.32, justifyContent: 'center', alignItems: 'center',},
-  linearGradient: { alignItems:'center',borderRadius: 25,},
+  linearGradient: { alignItems:'center',borderRadius: 25,position:'relative'},
   linearGradientView: { justifyContent:'center',alignItems:'center', width:width*0.6, height:50,},
   loginBtn:{ color:'#ffffff', fontSize:20,},
   containerModal:{flex:1,position:'absolute',top:0,bottom:0,left:0,right:0, justifyContent:'center',alignItems:'center',backgroundColor:'rgba(0,0,0,0.5)'},

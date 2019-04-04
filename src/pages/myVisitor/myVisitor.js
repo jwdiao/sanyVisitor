@@ -8,6 +8,7 @@ import {
   Button,
   Alert,
   TouchableOpacity,
+  ActivityIndicator,
   ImageBackground
 } from 'react-native';
 import {connect} from 'react-redux';
@@ -20,15 +21,33 @@ import { DashLine } from '../../common/DashLine'
 
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
+// ======redux相关======
+import * as visitorActions from '../../redux/actions/visitorActions'
+
+Date.prototype.Format = function (fmt) {  
+  var o = {
+      "M+": this.getMonth() + 1, //月份 
+      "d+": this.getDate(), //日 
+      "h+": this.getHours(), //小时 
+      "m+": this.getMinutes(), //分 
+      "s+": this.getSeconds(), //秒 
+      "q+": Math.floor((this.getMonth() + 3) / 3), //季度 
+      "S": this.getMilliseconds() //毫秒 
+  };
+  if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+  for (var k in o)
+  if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+  return fmt;
+}
 // ======顶部背景图片=======
 import {STATUS_BAR_HEIGHT,HEADER_HEIGHT} from '../../components/Header'
 import Header from '../../components/Header'
-/*import { setStatusBar } from '../../components/HOC/StatusBar'
+import { setStatusBar } from '../../components/HOC/StatusBar'
 @setStatusBar({
   barStyle: 'light-content',
   translucent: true,
   backgroundColor: 'transparent'
-})*/
+})
 
 export class MyVisitorScreen extends React.Component {
   /* static navigationOptions = {
@@ -53,13 +72,12 @@ export class MyVisitorScreen extends React.Component {
       const data = [
         {
           id: '001',
-          uname: '张三',
-          visitStartTime: '2019-04-05',
-          visitFlag: '上午',
-          visitNum: 3,
+          visitDate: '2019-04-05',
+          visitCycle: '上午',
+          visitorNum: 3,
           carNum: 3,
           visitReason: '供应商来访',
-          visitors: [
+          persons: [
             {
               uName: '张三',
               tel: '15625896541',
@@ -67,7 +85,7 @@ export class MyVisitorScreen extends React.Component {
               carId: '京A78965'
             },
             {
-              uName: '张三9',
+              uName: '张三1',
               tel: '15625896541',
               cardId: '411524789654123658',
               carId: '京A78965'
@@ -76,48 +94,138 @@ export class MyVisitorScreen extends React.Component {
         },
         {
           id: '002',
-          uname: '李四',
-          visitStartTime: '2019-04-05',
-          visitFlag: '上午',
-          visitNum: 3,
+          visitDate: '2019-04-05',
+          visitCycle: '上午',
+          visitorNum: 3,
           carNum: 3,
-          visitReason: '供应商来访'
+          visitReason: '供应商来访',
+          persons: [
+            {
+              uName: '张三3',
+              tel: '15625896541',
+              cardId: '411524789654123658',
+              carId: '京A78965'
+            },
+            {
+              uName: '张三4',
+              tel: '15625896541',
+              cardId: '411524789654123658',
+              carId: '京A78965'
+            }
+          ]
         },
         {
           id: '003',
-          uname: '张三3',
-          visitStartTime: '2019-04-05',
-          visitFlag: '上午',
-          visitNum: 3,
+          visitDate: '2019-04-05',
+          visitCycle: '上午',
+          visitorNum: 3,
           carNum: 3,
-          visitReason: '供应商来访'
+          visitReason: '供应商来访',
+          persons: [
+            {
+              uName: '张三5',
+              tel: '15625896541',
+              cardId: '411524789654123658',
+              carId: '京A78965'
+            },
+            {
+              uName: '张三6',
+              tel: '15625896541',
+              cardId: '411524789654123658',
+              carId: '京A78965'
+            }
+          ]
         },
         {
           id: '004',
-          uname: '张三4',
-          visitStartTime: '2019-04-05',
-          visitFlag: '上午',
-          visitNum: 3,
+          visitDate: '2019-04-05',
+          visitCycle: '上午',
+          visitorNum: 3,
           carNum: 3,
-          visitReason: '供应商来访'
+          visitReason: '供应商来访',
+          persons: [
+            {
+              uName: '张三7',
+              tel: '15625896541',
+              cardId: '411524789654123658',
+              carId: '京A78965'
+            },
+            {
+              uName: '张三8',
+              tel: '15625896541',
+              cardId: '411524789654123658',
+              carId: '京A78965'
+            }
+          ]
         },
+        {
+          id: '005',
+          visitDate: '2019-04-05',
+          visitCycle: '上午',
+          visitorNum: 3,
+          carNum: 3,
+          visitReason: '供应商来访',
+          persons: [
+            {
+              uName: '张三9',
+              tel: '15625896541',
+              cardId: '411524789654123658',
+              carId: '京A78965'
+            },
+            {
+              uName: '张三10',
+              tel: '15625896541',
+              cardId: '411524789654123658',
+              carId: '京A78965'
+            }
+          ]
+        },
+        {
+          id: '006',
+          visitDate: '2019-04-05',
+          visitCycle: '上午',
+          visitorNum: 3,
+          carNum: 3,
+          visitReason: '供应商来访',
+          persons: [
+            {
+              uName: '张三11',
+              tel: '15625896541',
+              cardId: '411524789654123658',
+              carId: '京A78965'
+            },
+            {
+              uName: '张三12',
+              tel: '15625896541',
+              cardId: '411524789654123658',
+              carId: '京A78965'
+            }
+          ]
+        }
       ]
       this.setState({
         myVisitorList: data,
         loaded: true,
         scrollOfssetY: 0
       })
+      // 将获取的数据存入redux
+      this.props.VisitorListProps(data);
     },500)
   }
   
-  renderItems ({item}) { // 
+  renderItems ({item,index}) { // 
+    // let index = '第' + item;
+    // 随机生成颜色
+    console.log(item)
+    const borderColorArr = ['#e96aa1','#4ccc94','#9f90f1','#ffc472']
+    let currentColor = borderColorArr[index%4]
     return (  
       <View style={styles.item}>
-        <Text style={styles.title}>{item.uname}</Text>
+        <Text style={[{borderColor:currentColor},styles.title]}>{item.persons[0]? item.persons[0].uName: ''}</Text>
         <View style={styles.row}>
             <View style={styles.rowInner}>
               <Text style={styles.lable}>拜访开始时间</Text>
-              <Text style={styles.value}>{item.visitStartTime}</Text>
+              <Text style={styles.value}>{item.visitDate}</Text>
             </View>
             <DashLine />
         </View>
@@ -125,14 +233,14 @@ export class MyVisitorScreen extends React.Component {
         <View style={styles.row}>
           <View style={styles.rowInner}>
             <Text style={styles.lable}>拜访周期</Text>
-            <Text style={styles.value}>{item.visitFlag}</Text>
+            <Text style={styles.value}>{item.visitCycle}</Text>
           </View>
           <DashLine />
         </View>
         <View style={styles.row}>
           <View style={styles.rowInner}>
             <Text style={styles.lable}>拜访人数</Text>
-            <Text style={styles.value}>{item.visitNum}</Text>
+            <Text style={styles.value}>{item.visitorNum}</Text>
           </View>
           <DashLine />
         </View>
@@ -156,6 +264,31 @@ export class MyVisitorScreen extends React.Component {
 
   _handleAddVisitor= async () => {
     this.props.navigation.navigate('RecordVisitor')
+
+    // let dater = new Date().Format('yyyy-MM-dd')
+    // dater.Format('yyyy-MM-dd')
+    const initCurrentVisitorObj = { // 当前新增对象
+      visitDate: new Date().Format('yyyy-MM-dd'),
+      visitCycle: ['上午'],
+      visitorNum: '',
+      carNum: '',
+      visitReason: '',
+      persons: [
+        /* {
+          uName: '张三',
+          tel: '15625896541',
+          cardId: '411524789654123658',
+          carId: '京A78965'
+        },
+        {
+          uName: '张三1',
+          tel: '15625896541',
+          cardId: '411524789654123658',
+          carId: '京A78965'
+        } */
+      ]
+    }
+    this.props.VisitorObjProps(initCurrentVisitorObj)
   };
 
   /* _handleTest() {
@@ -173,16 +306,19 @@ export class MyVisitorScreen extends React.Component {
   render() {
     const enterHistoryBtn =  (
       <View>
-        <TouchableOpacity activeOpacity={1} onPress={() =>this.props.navigation.navigate('RecordVisitor')}>
+        <TouchableOpacity activeOpacity={1} onPress={() =>this.props.navigation.navigate('VisitorHistory')}>
         <MaterialCommunityIcons name={'history'} size={26} color={'#fff'} style={{marginRight: 15}} />
         </TouchableOpacity>
       </View>
     )
     // 数据加载成功之前
     if (!this.state.loaded){
-      return <Text>正在加载中....</Text>
+      return (
+        <View style={{display: 'flex',flex:1,flexDirection: 'column',justifyContent: 'center',alignItems:'center'}}>
+          <ActivityIndicator animating={true} color="green" size="large"></ActivityIndicator>
+          <Text style={{marginTop: 10}}>正在加载中...</Text>
+        </View>)
     }
-
     console.log('props', this.props);
 
     // 数据加载成功之后但是没有访客显示空页面
@@ -223,8 +359,8 @@ export class MyVisitorScreen extends React.Component {
         <FlatList
           style={styles.list}
           contentContainerStyle={{paddingTop: px2dp(60),paddingBottom: 10}}
-          data={this.state.myVisitorList}
-          // data={this.props.visitors}
+          // data={this.state.myVisitorList}
+          data={this.props.visitorsProps}
           renderItem={this.renderItems}
           keyExtractor={item => item.id}
           onScroll={this.onScroll.bind(this)}
@@ -244,13 +380,20 @@ export class MyVisitorScreen extends React.Component {
 
 const mapStateToProps = (store, ownProps) => {
   const {visitorsManage} = store;
-  console.log("current store:", store);
+  // console.log("current store:", store);
   return {
-    visitors: visitorsManage.visitors
+    visitorsProps: visitorsManage.visitorsList,
+    // currentVisitorObjProps: visitorsManage.currentVisitorObj
+  }
+}
+const mapDispatchToProps = (dispatch, ownProps) => {
+  return {
+    VisitorListProps: (visitorArr) => dispatch(visitorActions.VisitorListAction(visitorArr)),
+    VisitorObjProps: (visitorObj) => dispatch(visitorActions.EditVisitorObjAction(visitorObj)), //编辑访客当前对象
   }
 }
 
-export default connect(mapStateToProps)(MyVisitorScreen)
+export default connect(mapStateToProps,mapDispatchToProps)(MyVisitorScreen)
 
 
 
@@ -299,7 +442,7 @@ const styles = StyleSheet.create({
     paddingTop:px2dp(20),
     borderLeftWidth: px2dp(7),
     borderStyle: 'solid',
-    borderColor:'#4ccc94',
+    /**borderColor:'#4ccc94', */
     // borderTopLeftRadius: px2dp(6),
     paddingLeft: px2dp(24),
     

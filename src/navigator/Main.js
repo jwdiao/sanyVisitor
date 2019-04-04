@@ -18,11 +18,14 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 // 个人信息tab
 import { MyInfoScreen } from '../pages/personInfo/Index'; // 个人信息
 import { ModifyPwdScreen } from '../pages/personInfo/ModifyPwd'; // 修改密码
+import { ModifyPwdSuccessScreen } from '../pages/personInfo/ModifyPwdSuccess'; // 修改密码
 
 // 
-import { MyVisitorScreen } from '../pages/myVisitor/MyVisitor'; // 我的访客
-import { RecordVisitorScreen } from '../pages/myVisitor/RecordVisitor'; // 访客
-import { AddVisitorScreen } from '../pages/myVisitor/AddVisitor'; // 信息录入
+import MyVisitorScreen from '../pages/myVisitor/MyVisitor'; // 我的访客
+import VisitorHistoryScreen from '../pages/myVisitor/VisitorHistory'; // 访客历史
+import RecordVisitorScreen from '../pages/myVisitor/RecordVisitor'; // 访客
+import AddVisitorScreen from '../pages/myVisitor/AddVisitor'; // 信息录入
+import EditPeopleScreen from '../pages/myVisitor/EditPeople'; // 信息编辑
 
 import { TestScreen } from '../pages/test/Header'; // 测试
 import { px2dp } from '../utils/ScreenUtil';
@@ -204,7 +207,9 @@ const TabNavigator = createBottomTabNavigator(
       style: {
         borderTopWidth:0,
         height: px2dp(100),
-        backgroundColor: '#FFFEFF'
+        backgroundColor: '#FFFEFF',
+        elevation: 10,
+        // paddingHorizontal:16,paddingVertical:23
       },
       allowFontScaling: false,
       activeTintColor: '#2380FE', // focused颜色
@@ -216,6 +221,12 @@ const TabNavigator = createBottomTabNavigator(
 export const AppStack = createStackNavigator({
   Tabs: {
     screen: TabNavigator,
+    navigationOptions: {
+      header: null
+    }
+  },
+  VisitorHistory: {
+    screen: VisitorHistoryScreen,
     navigationOptions: {
       header: null
     }
@@ -280,8 +291,21 @@ export const AppStack = createStackNavigator({
       })
     } */
   },
+  EditPeople: {
+    screen: EditPeopleScreen,
+    navigationOptions: {
+      header: null
+    }
+  },
   ModifyPwd: {
     screen: ModifyPwdScreen,
+    navigationOptions: {
+      title: '修改密码',
+      headerRight: <View />
+    }
+  },
+  ModifyPwdSuccess: {
+    screen: ModifyPwdSuccessScreen,
     navigationOptions: {
       title: '修改密码',
       headerRight: <View />

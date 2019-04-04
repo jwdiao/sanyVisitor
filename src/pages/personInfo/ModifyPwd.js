@@ -9,11 +9,11 @@ import {px2dp} from "../../utils/ScreenUtil";
 import {STATUS_BAR_HEIGHT,HEADER_HEIGHT} from '../../components/Header'
 import Header from '../../components/Header'
 import { setStatusBar } from '../../components/HOC/StatusBar'
-/*@setStatusBar({
+@setStatusBar({
   barStyle: 'light-content',
   translucent: true,
   backgroundColor: 'transparent'
-})*/
+})
 export class ModifyPwdScreen extends React.Component {
   static navigationOptions = {
     header: null
@@ -31,7 +31,6 @@ export class ModifyPwdScreen extends React.Component {
     newPwdValue:'',
     reNewPwdValue:'',
     isShowReNewPwd:false,//是否显示提示
-    isModalVisible:false,//修改成功后弹出的模态框
   }
 
   render() {
@@ -55,46 +54,30 @@ export class ModifyPwdScreen extends React.Component {
         <ImageBackground source={require('./img/head_bg2.png')} style={styles.backgroundImage}>          
           <Header title="修改密码" left={leftV} fullScreen />
         </ImageBackground>
-        <View style={{marginTop:20,}}>
-          <Text style={styles.pwdPosition}>原始密码</Text>
-          <TextInput style={styles.inputTextPwdTopAndBottom} placeholder="请输入原始密码" secureTextEntry/>
-        </View>
         <View>
-          <Text style={styles.pwdPosition}>新密码</Text>
-          <TextInput style={styles.inputTextPwd}  Value={this.state.newPwdValue} placeholder="请输入新密码至少6位" secureTextEntry onChangeText={this._NewPwdChange}/>
-        </View>
-        <View>
-          <Text style={styles.pwdPosition}>确认新密码</Text>
-          {ReNewPwdView}
-          <Text style={{color:'#ff0000',position:'absolute',top:15,right:15,fontSize:16}} onPress={this._pressRedText}>{ReNewPwdText}</Text>
-        </View>
-        <View style={{alignItems:'center',marginTop:200,}}>
-          <LinearGradient colors={['#09B6FD', '#6078EA']} start={{x:0,y:0}} end={{x:1,y:0}} style={[styles.submitLogin,{marginTop:20}]} >
-            <TouchableNativeFeedback onPress={this._signOutAsync}>
-              <View style={styles.submitLoginView}>
-                <Text style={{color:'#fff',fontSize:18}}>确定</Text>
-              </View>
-            </TouchableNativeFeedback>
-          </LinearGradient>
+          <View style={{marginTop:20,}}>
+            <Text style={styles.pwdPosition}>原始密码</Text>
+            <TextInput style={styles.inputTextPwdTopAndBottom} placeholder="请输入原始密码" secureTextEntry/>
+          </View>
+          <View>
+            <Text style={styles.pwdPosition}>新密码</Text>
+            <TextInput style={styles.inputTextPwd}  Value={this.state.newPwdValue} placeholder="请输入新密码至少6位" secureTextEntry onChangeText={this._NewPwdChange}/>
+          </View>
+          <View>
+            <Text style={styles.pwdPosition}>确认新密码</Text>
+            {ReNewPwdView}
+            <Text style={{color:'#ff0000',position:'absolute',top:15,right:15,fontSize:16}} onPress={this._pressRedText}>{ReNewPwdText}</Text>
+          </View>
+          <View style={{alignItems:'center',marginTop:200,}}>
+            <LinearGradient colors={['#09B6FD', '#6078EA']} start={{x:0,y:0}} end={{x:1,y:0}} style={[styles.submitLogin,{marginTop:20}]} >
+              <TouchableNativeFeedback onPress={this._signOutAsync}>
+                <View style={styles.submitLoginView}>
+                  <Text style={{color:'#fff',fontSize:18}}>确定</Text>
+                </View>
+              </TouchableNativeFeedback>
+            </LinearGradient>
 
-        </View>
-        <View>
-          <Modal animationType='fade' presentationStyle='formSheet' visible={this.state.isModalVisible}
-                  onRequestClose={()=>{alert('modal closeed')}}>
-            <View style={styles.containerModal}>
-              <View style={{width:width,height:height*0.9,backgroundColor:'#fff',justifyContent:'center',alignItems:'center'}}>
-                <Image style={{marginTop:-110,marginBottom:50}} source={require('../../assets/images/edtiSuccess/gologin.png')}/>
-                <Text style={{fontSize:16,marginBottom:120,}}>您已经成功更改密码，请使用新密码登录</Text>
-                <LinearGradient colors={['#09B6FD', '#6078EA']} start={{x:0,y:0}} end={{x:1,y:0}} style={styles.submitLogin}>
-                  <TouchableNativeFeedback onPress={this._nowSignIn}>
-                    <View style={styles.submitLoginView}>
-                      <Text style={{color:'#fff',fontSize:18}}>现在登录</Text>
-                    </View>
-                    </TouchableNativeFeedback>
-                </LinearGradient>
-              </View>
-            </View>
-          </Modal>
+          </View>
         </View>
       </View>
     </ScrollView>
@@ -102,8 +85,8 @@ export class ModifyPwdScreen extends React.Component {
   }
    _signOutAsync = async () => {
     await AsyncStorage.clear();
-    this.setState({isModalVisible:true})
     // this.props.navigation.navigate('Auth');
+     this.props.navigation.navigate('ModifyPwdSuccess');
   };
   _nowSignIn = () => {
     this.props.navigation.navigate('Auth');

@@ -13,6 +13,4 @@ const BaseUrl = 'http://10.19.7.69:8083' // 测试地址
 // const BaseUrl = 'http://10.88.195.171:8100' // 何正飞
 //const BaseUrl = 'http://192.168.1.133:8100' // 何正飞(外网)
 // const BaseUrl = 'http://10.88.195.184:9012' // 杨宝
-
-
 export default BaseUrl

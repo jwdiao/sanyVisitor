@@ -75,6 +75,7 @@ import {
 
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import AntDesign from 'react-native-vector-icons/AntDesign'
 
 import {px2dp} from "../../utils/ScreenUtil";
 // ======顶部背景图片=======
@@ -107,7 +108,7 @@ export class MyInfoScreen extends React.Component {
             <Header title="个人" fullScreen />
           </ImageBackground>
           <View>
-            <View style={[styles.sizeViewTop,{position:'absolute'}]}>
+            <View style={styles.sizeViewTop}>
               <View style={{marginTop:-70*scale,}}>
                 {/*<Image style={styles.avarterImg} source={require('./img/title.png')}/>*/}
                 {/*<Image style={{width:70,height:70}}  source={{uri:'https://avatar.csdn.net/F/9/6/3_public_calss.jpg'}}/>*/}
@@ -124,11 +125,10 @@ export class MyInfoScreen extends React.Component {
                 <Text style={{fontSize:16,paddingBottom:20,paddingTop:20,borderBottomWidth:1,borderBottomColor:'#f0f0f0'}}>        电       话</Text>
                 <Text style={{fontSize:16,position:'absolute',top:18,right:15,}}>{telNumber}</Text>
               </View>
-              <View>
-                {/*<Image style={styles.phoneAndChangePwd} source={require('./img/cheangePwd.png')}/>*/}
+              <View style={{height:height*0.4*0.2}}>
                 <MaterialCommunityIcons color='#47f3a0' name={'shield-cross'} size={24} style={styles.phoneAndChangePwd}/>
-                <Text onPress={this._modifyPwd} style={{fontSize:16,paddingTop:20}}>        修改密码</Text>
-                <Image style={{position:'absolute',top:22,right:15}} source={require('./img/dayu.png')}/>
+                <Text onPress={this._modifyPwd} style={{fontSize:16,paddingTop:20,paddingBottom:20}}>        修改密码</Text>
+                <AntDesign color='#999' name={'right'} size={24} style={styles.phoneAndChangeRight}/>
               </View>
             </View>
           </View>
@@ -152,14 +152,15 @@ const styles = StyleSheet.create({
     // zIndex:-1,
     // backgroundColor: '#4487d6',
   },
-  sizeViewTop:{backgroundColor:'#fff',left:(width-300*scale)/2,width:300*scale,height:130*scale,elevation: 2,
+  sizeViewTop:{backgroundColor:'#fff',left:(width-300*scale)/2,width:300*scale,height:130*scale,elevation: 6,
     paddingHorizontal:16,paddingVertical:23,justifyContent:'center',alignItems:'center',borderRadius:5,marginTop:-85*scale},
   // backgroundImage:{width:width,height:height*0.3},
   // sizeViewTop:{backgroundColor:'#fff',marginTop:80*scale,left:(width-300*scale)/2,width:300*scale,height:130*scale,elevation: 2,
   //   paddingHorizontal:16,paddingVertical:23,justifyContent:'center',alignItems:'center',borderRadius:5},
-  avarterImg:{width:70*scale,height:70*scale,borderRadius:70*scale,borderWidth:3,borderColor:'#fff'},
-  sizeViewBottom:{backgroundColor:'#fff',marginTop:15*scale,left:(width-300*scale)/2,width:300*scale,height:158*scale,elevation: 2,
+  avarterImg:{width:70*scale,height:height*0.1,borderRadius:70*scale,borderWidth:3,borderColor:'#fff'},
+  sizeViewBottom:{backgroundColor:'#fff',marginTop:20*scale,left:(width-300*scale)/2,width:width*0.8,height:height*0.25,elevation: 6,
     paddingHorizontal:16,paddingVertical:23,fontSize:16,borderRadius:5},
-  phoneAndChangePwd:{position:'absolute',top:19,left:0,},
-
+  phoneAndChangePwd:{position:'absolute',top:height*0.1*0.2,left:0,},
+  phoneAndChangeRight:{position:'absolute',top:height*0.2*0.1,right:0,},
 })
+

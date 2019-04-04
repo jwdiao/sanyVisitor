@@ -13,13 +13,14 @@ import {
   ImageBackground,
   TouchableOpacity
 } from 'react-native';
-import { Drawer, List, WhiteSpace } from '@ant-design/react-native';
 import {connect} from 'react-redux';
+import { Drawer, List, WhiteSpace } from '@ant-design/react-native';
 
 
 
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import LinearGradient from 'react-native-linear-gradient';
 import Picker from 'react-native-picker'
 
@@ -46,11 +47,11 @@ Date.prototype.Format = function (fmt) {
 import {STATUS_BAR_HEIGHT,HEADER_HEIGHT} from '../../components/Header'
 import Header from '../../components/Header'
 import { setStatusBar } from '../../components/HOC/StatusBar'
-/*@setStatusBar({
+@setStatusBar({
   barStyle: 'light-content',
   translucent: true,
   backgroundColor: 'transparent'
-})*/
+})
 
 export class RecordVisitorScreen extends React.Component {
 
@@ -71,24 +72,23 @@ export class RecordVisitorScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      visitDate: '', // 拜访日期
-      period: ['上午'], // 拜访周期
+      /* visitDate: '', // 拜访日期
+      visitCycle: ['上午'], // 拜访周期
       visitorNum: '', // 拜访人数
-      carNum: '', // 驾车数量
-      reason: '', // 拜访原因
+      carNum: '', // 驾车数量 */
+      visitReason: '', // 拜访原因
       // isChecked: false,
-      visitorList: [],
-      selectedVisitorList: []
+      // visitorList: [],
     }
   }
   componentDidMount () {
-    let dater = new Date()
+    /* let dater = new Date()
     this.setState({
       visitDate: dater.Format('yyyy-MM-dd')
-    })
+    }) */
 
     // 访客列表获取数据
-    let visitorData = [
+    /* let visitorData = [
        {
         id: '001',
         uName: '张三',
@@ -114,7 +114,7 @@ export class RecordVisitorScreen extends React.Component {
     visitorData.forEach(item => item.isChecked = false)
     this.setState({
       visitorList: visitorData
-    })
+    }) */
     
   }
   _openDatePicker = async () => {
@@ -127,9 +127,15 @@ export class RecordVisitorScreen extends React.Component {
       if (action !== DatePickerAndroid.dismissedAction) {
         let dateStr = year + '/' + (month+1) + '/' + day
         let dateObj = new Date(dateStr)
-        this.setState({
+        /* this.setState({
           visitDate: dateObj.Format('yyyy-MM-dd')
-        })
+        }) */
+
+        const initCurrentVisitorObj = { // 当前新增对象
+          ...this.props.currentVisitorObjProps,
+          visitDate: dateObj.Format('yyyy-MM-dd'),
+        }
+        this.props.VisitorObjProps(initCurrentVisitorObj)
       }
     } catch ({code, message}) {
       console.warn('Cannot open date picker', message)
@@ -139,9 +145,14 @@ export class RecordVisitorScreen extends React.Component {
     Picker.init({
       pickerTitleText: '',
       pickerData: ['上午','下午','全天'],
-      selectedValue: this.state.period,
+      selectedValue: this.props.currentVisitorObjProps.visitCycle,
       onPickerConfirm: data => {
-        this.setState({period: data})
+        // this.setState({visitCycle: data})
+        const initCurrentVisitorObj = { // 当前新增对象
+          ...this.props.currentVisitorObjProps,
+          visitCycle: data,
+        }
+        this.props.VisitorObjProps(initCurrentVisitorObj)
       },
       onPickerCancel: data => {
       },
@@ -150,6 +161,9 @@ export class RecordVisitorScreen extends React.Component {
     })
     Picker.show()
   };
+  handleVisitReasonFun = (reason) => {
+    console.log('reason:',reason)
+  }
 
   _addVisitorPage = async () => {
     this.props.navigation.navigate('AddVisitor');
@@ -161,7 +175,7 @@ export class RecordVisitorScreen extends React.Component {
 
   // 保存按钮
   _saveOpt () {
-    let itemObj = {
+/*     let itemObj = {
       id: '100',
       uname: '王五',
       visitStartTime: '2019-04-05',
@@ -183,78 +197,66 @@ export class RecordVisitorScreen extends React.Component {
           carId: '京A78965'
         }
       ]
-    };
-    this.props.addVisitor(itemObj);
+    }; */
 
+    // 调接口新增一条数据
+    // 将返回的该条数据加入到redux中
+    // this.props.addVisitorProps(itemObj);
+    const initCurrentVisitorObj = { // 当前新增对象
+      ...this.props.currentVisitorObjProps,
+      id: Math.random().toString(),
+      visitReason: this.state.visitReason,
+    }
+    this.props.VisitorObjProps(initCurrentVisitorObj)
+    // this.props.addVisitorProps(this.props.currentVisitorObjProps);
+    this.props.addVisitorProps(initCurrentVisitorObj);
     this.props.navigation.navigate('MyVisitorIndex');
   }
 
   // 取消按钮
   _cancelBtnOpt () {
-    // 取消选中所有数据
-    this.state.visitorList.forEach((ele, index) => {
-      if (ele.isChecked) {
-        this.state.visitorList[index].isChecked = false
+    let personArr = this.props.currentVisitorObjProps.persons
+    for(var i=0;i<personArr.length;i++){
+      if(personArr[i].isChecked){
+        this.props.CancleCheckedVisitorProps(personArr[i].id)
       }
-    })
-    this.setState({
-      visitorList: this.state.visitorList,
-      selectedVisitorList: []
-    })
+    }
   }
   // 删除按钮
   _delOpt () {
-    let newArr = this.state.visitorList.slice()
-    for(var i=newArr.length-1;i>=0;i--){
-      if(newArr[i].isChecked){
-        newArr.splice(i,1)
+    let personArr = this.props.currentVisitorObjProps.persons
+    for(var i=0;i<personArr.length;i++){
+      if(personArr[i].isChecked){
+        this.props.DeleteVisitorProps(personArr[i].id)
       }
     }
-
-    this.setState({
-      visitorList: newArr,
-      selectedVisitorList: []
-    })
   }
 
-  handleSelectedCheckbox (item) {
-    this.state.selectedVisitorList.forEach((ele,index) => {
-      if (item.id === ele.id) {
-        this.state.selectedVisitorList.splice(index,1)
-        this.setState({
-          selectedVisitorList: this.state.selectedVisitorList
-        })
-        return;
-      }
-    })
-  }
-
+  // toggle checkbox
   handleClickCheckbox (item) {
-    this.state.visitorList.forEach((ele, index) => {
-      if (ele.id === item.id) {
+    this.props.UpdatePersonProps(item)
+  }
+  // 编辑访客人员
+  handleEditPeople (person) {
+    console.log('item:',person)
+    this.props.navigation.navigate('EditPeople');
+    this.props.EditPersonProps(person)
+  }
 
-
-        
-        this.state.visitorList[index].isChecked = !item.isChecked
-        
-        // 加入选中的数组
-        if(this.state.visitorList[index].isChecked) { // 是选中,加入选中数组
-          this.state.selectedVisitorList.push(this.state.visitorList[index])
-        } else { // 是未选中，从选中数组中删除
-          this.handleSelectedCheckbox(this.state.visitorList[index])
-        }
-        
-        this.setState({
-          visitorList: this.state.visitorList
-        })
-        return;
+  // 选中checkbox个数
+  selectedPersonLen () {
+    let len = 0;
+    this.props.currentVisitorObjProps.persons.map((item)=>{
+      if(item.isChecked){
+        len = len+1
       }
     })
+    return len
   }
 
   // 显示底部按钮
   renderBottomBtn () {
-    if (this.state.visitorList.length>0 && this.state.selectedVisitorList.length>0) {
+    if (this.props.currentVisitorObjProps.persons.length>0 && this.selectedPersonLen()>0) {
       return (
         <View style={styles.delAndCancleBtnBox}>
           <TouchableNativeFeedback onPress={() => this._delOpt()}>
@@ -270,7 +272,7 @@ export class RecordVisitorScreen extends React.Component {
           </TouchableNativeFeedback>
         </View>
       )
-    } else if (this.state.visitorList.length>0 && this.state.selectedVisitorList.length<=0){
+    } else if (this.props.currentVisitorObjProps.persons.length>0 && this.selectedPersonLen()<=0){
       return (
         <View style={styles.delAndCancleBtnBox}>
           <TouchableNativeFeedback onPress={() => this._saveOpt()}>
@@ -281,13 +283,6 @@ export class RecordVisitorScreen extends React.Component {
             </LinearGradient>
           </TouchableNativeFeedback>
         </View>
-      //  <View style={styles.saveBtnBox}>
-      //     <TouchableNativeFeedback onPress={this._saveOpt}>
-      //       <LinearGradient style={styles.saveBtn}  start={{x: 0, y: 0}} end={{x: 1, y: 0}} colors={['#09B6FD', '#6078EA']}>
-      //         <Text style={styles.saveBtnText}>保存</Text>
-      //       </LinearGradient>
-      //     </TouchableNativeFeedback>
-      //   </View>
       )
     }
   }
@@ -301,6 +296,14 @@ export class RecordVisitorScreen extends React.Component {
         </TouchableOpacity>
       </View>
     )
+    const {
+      visitDate,
+      visitCycle,
+      visitorNum,
+      carNum,
+      visitReason,
+      persons
+    } =  this.props.currentVisitorObjProps
     return (
     <View style={{flex:1,backgroundColor:'#F3F3F3'}}>
       <ImageBackground source={require('./img/head_bg2.png')} style={styles.backgroundImage}>          
@@ -311,12 +314,6 @@ export class RecordVisitorScreen extends React.Component {
           <Text style={styles.addVisitorBtnText}>新增访客</Text>
         </TouchableNativeFeedback>
       </LinearGradient>
-      
-        {/* <LinearGradient colors={['#6078EA', '#09B6FD']} style={styles.addVisitorBtn}>
-          <TouchableNativeFeedback onPress={() => this._openAddVisitorPage()}>
-            <Text style={styles.addVisitorBtnText}>新增访客</Text>
-          </TouchableNativeFeedback>
-        </LinearGradient> */}
      
       {/* 底部按钮 start */}
       {this.renderBottomBtn()}
@@ -329,7 +326,7 @@ export class RecordVisitorScreen extends React.Component {
               <Text style={styles.recordVisitorLabel}>拜访日期</Text>
               <TouchableNativeFeedback onPress={this._openDatePicker}>
                 <View style={styles.recordVisitorItemRight}>
-                <Text style={styles.recordVisitorVal}>{this.state.visitDate}</Text>
+                <Text style={styles.recordVisitorVal}>{visitDate}</Text>
                 <FontAwesome name={'angle-right'} size={24} color={"#7a7a7f"} style={styles.recordVisitorArrow} />
                 </View>
               </TouchableNativeFeedback>
@@ -338,7 +335,7 @@ export class RecordVisitorScreen extends React.Component {
               <Text style={styles.recordVisitorLabel}>拜访周期</Text>
               <TouchableNativeFeedback onPress={this._openPeriodPicker}>
                 <View style={styles.recordVisitorItemRight}>
-                  <Text style={styles.recordVisitorVal}>{this.state.period}</Text>
+                  <Text style={styles.recordVisitorVal}>{visitCycle}</Text>
                   <FontAwesome name={'angle-right'} size={24} color={"#7a7a7f"} style={styles.recordVisitorArrow} />
                 </View>
               </TouchableNativeFeedback>
@@ -347,7 +344,7 @@ export class RecordVisitorScreen extends React.Component {
             <View style={styles.recordVisitorItem}>
               <Text style={styles.recordVisitorLabel}>拜访人数</Text>
               <View style={styles.recordVisitorItemRight}>
-                <Text style={styles.recordVisitorVal}>{this.state.visitorNum}</Text>
+                {/* <Text style={styles.recordVisitorVal}>{this.props.currentVisitorObjProps.persons.length}</Text> */}
                 <FontAwesome name={'angle-right'} size={24} color={"#7a7a7f"} style={styles.recordVisitorArrow} />
               </View>
             </View>
@@ -355,7 +352,7 @@ export class RecordVisitorScreen extends React.Component {
             <View style={styles.recordVisitorItem}>
               <Text style={styles.recordVisitorLabel}>驾车数量</Text>
               <View style={styles.recordVisitorItemRight}>
-                <Text style={styles.recordVisitorVal}>{this.state.carNum}</Text>
+                <Text style={styles.recordVisitorVal}>{carNum}</Text>
                 <FontAwesome name={'angle-right'} size={24} color={"#7a7a7f"} style={styles.recordVisitorArrow} />
               </View>
             </View>
@@ -366,7 +363,8 @@ export class RecordVisitorScreen extends React.Component {
                 <TextInput
                   style={styles.recordVisitorItemInput}
                   placeholder="请输入来访原因"
-                  onChangeText={(reason) => this.setState({reason})}
+                  value={this.state.visitReason}
+                  onChangeText={(visitReason) => this.setState({visitReason})}
                 />
               </View>
             </View>
@@ -376,7 +374,7 @@ export class RecordVisitorScreen extends React.Component {
           {/* checkbox start */}
           <View style={styles.checkboxList}>
           {
-            this.state.visitorList.map((item, index) => {          
+            this.props.currentVisitorObjProps.persons.map((item, index) => {          
               return (
                 <View
                 key={item.id}
@@ -386,29 +384,32 @@ export class RecordVisitorScreen extends React.Component {
                     <View
                       style={styles.checkboxItemTitleLeft}>
                       {item.isChecked ?
-                        <Image source={require('./checkbox_checked.jpg')} style={styles.checkboxImg} />
-                        : <Image source={require('./checkbox_unchecked.jpg')} style={styles.checkboxImg} />}
-                      <Text style={styles.checkboxItemName}>张三</Text>
+                        <MaterialCommunityIcons name={'checkbox-marked-circle'} size={24} color={"#1571FA"} />:
+                        <MaterialCommunityIcons name={'checkbox-blank-circle-outline'} size={24} color={"#BFBFBF"} />
+                      }
+                      <Text style={styles.checkboxItemName}>{item.uName}</Text>
                     </View>
                     </TouchableNativeFeedback>
                     <View style={styles.checkboxItemTitleRight}>
                       <AntDesign name={'clockcircleo'} size={12} color={"#B3B3B3"} style={styles.checkboxItemTitleClock} />
                       <Text style={styles.checkboxItemTitleDate}>2018/04/15</Text>
+                      <TouchableNativeFeedback onPress={() => this.handleEditPeople(item)}>
                       <AntDesign name={'edit'} size={24} color={"#09B6FD"} style={styles.checkboxItemTitleEdit} />
+                      </TouchableNativeFeedback>
                     </View>
                   </View>
                   <View style={styles.checkboxItemInfoBox}>
                     <View style={styles.checkboxItemInfo}>
                       <FontAwesome name={'mobile-phone'} size={24} color={"#c1bfbf"} style={styles.checkboxItemInfoIcon} />
-                      <Text style={styles.checkboxItemInfoText}>18301254698</Text>
+                      <Text style={styles.checkboxItemInfoText}>{item.tel}</Text>
                     </View>
                     <View style={styles.checkboxItemInfo}>
                       <FontAwesome name={'id-card-o'} size={14} color={"#c1bfbf"} style={styles.checkboxItemInfoIcon} />
-                      <Text style={styles.checkboxItemInfoText}>411254789654123698</Text>
+                      <Text style={styles.checkboxItemInfoText}>{item.cardId}</Text>
                     </View>
                     <View style={styles.checkboxItemInfo}>
                       <FontAwesome name={'car'} size={14} color={"#c1bfbf"} style={styles.checkboxItemInfoIcon} />
-                      <Text style={styles.checkboxItemInfoText}>京Q45896</Text>
+                      <Text style={styles.checkboxItemInfoText}>{item.carId}</Text>
                     </View>
                   </View>
                 </View>
@@ -417,25 +418,29 @@ export class RecordVisitorScreen extends React.Component {
           }
           </View>
 
-        </View>
-          {/* checkbox end */}
-
-
-
-          
-          
+          {/* checkbox end */}          
+        </View> 
       </ScrollView>
     </View>
     );
   }
+
 }
 
 const mapStateToProps = (state, ownProps)=>{
-  return {};
+  const {visitorsManage} = state;
+  return {
+    currentVisitorObjProps: visitorsManage.currentVisitorObj
+  };
 }
 const mapDispatchToProps = (dispatch, ownProps) => {
   return {
-    addVisitor: (visitor) => dispatch(visitorActions.addVisitor(visitor)),
+    UpdatePersonProps: (item) => dispatch(visitorActions.UpdatePersonAction(item)), // 选中更新==已改
+    addVisitorProps: (visitor) => dispatch(visitorActions.AddVisitorAction(visitor)), // 保存
+    DeleteVisitorProps: (id) => dispatch(visitorActions.DeletePersonAction(id)), // 删除
+    CancleCheckedVisitorProps: (id) => dispatch(visitorActions.CancleCheckedPersonAction(id)), // 取消
+    VisitorObjProps: (visitorObj) => dispatch(visitorActions.EditVisitorObjAction(visitorObj)), // 编辑访客当前对象
+    EditPersonProps: (peopleObj) => dispatch(visitorActions.EditPersonAction(peopleObj)) // 编辑访客成员
   }
 }
 
@@ -550,10 +555,6 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'center',
     
-  },
-  checkboxImg: {
-    width: px2dp(36),
-    height: px2dp(36)
   },
   checkboxItemName: {
     marginLeft: px2dp(16),

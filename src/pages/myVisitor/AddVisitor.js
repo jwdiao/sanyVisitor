@@ -8,10 +8,13 @@ import {
   ImageBackground,
   TouchableOpacity
 } from 'react-native';
-// import { Button, Drawer, List, WhiteSpace } from '@ant-design/react-native';
+import { Button, Drawer, List, WhiteSpace } from '@ant-design/react-native';
 import {px2dp} from "../../utils/ScreenUtil";
-import LinearGradient from 'react-native-linear-gradient';
+// import LinearGradient from 'react-native-linear-gradient';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+
+import {connect} from 'react-redux';
+import * as visitorActions from '../../redux/actions/visitorActions'
 
 import {STATUS_BAR_HEIGHT,HEADER_HEIGHT} from '../../components/Header'
 import Header from '../../components/Header'
@@ -47,13 +50,16 @@ export class AddVisitorScreen extends React.Component {
   }
   _saveAndAdd = () => {
     let visitorInfoObj = {
+      id: '001'+Math.random(),
       uName: this.state.uName,
       tel: this.state.tel,
       cardId: this.state.cardId,
-      carId: this.state.carId
+      carId: this.state.carId,
+      isChecked: false
     }
     alert('新增成功！')
-    // 调用接口新增一条
+    // 调用接口新增多条
+    this.props.addPersonProps(visitorInfoObj)
 
     // 新增后清空继续新增
     this.setState({
@@ -65,13 +71,16 @@ export class AddVisitorScreen extends React.Component {
   }
   _saveAndBack = async () => {
     let visitorInfoObj = {
+      id: '001'+Math.random(),
       uName: this.state.uName,
       tel: this.state.tel,
       cardId: this.state.cardId,
-      carId: this.state.carId
+      carId: this.state.carId,
+      isChecked: false
     }
     // alert('新增成功！')
-    // 调用接口新增多条
+    // 调用接口新增1条
+    this.props.addPersonProps(visitorInfoObj)
     this.props.navigation.navigate('RecordVisitor');
   }
   
@@ -114,6 +123,7 @@ export class AddVisitorScreen extends React.Component {
             <TextInput
               style={styles.addVisitorItemInput}
               placeholder="请输入姓名"
+              value={this.state.uName}
               onChangeText={(uName) => this.setState({uName})}
             />
           </View>
@@ -122,6 +132,7 @@ export class AddVisitorScreen extends React.Component {
             <TextInput
               style={styles.addVisitorItemInput}
               placeholder="请输入电话号码"
+              value={this.state.tel}
               onChangeText={(tel) => this.setState({tel})}
             />
           </View>
@@ -130,6 +141,7 @@ export class AddVisitorScreen extends React.Component {
             <TextInput
               style={styles.addVisitorItemInput}
               placeholder="请输入身份证号"
+              value={this.state.cardId}
               onChangeText={(cardId) => this.setState({cardId})}
             />
           </View>
@@ -138,40 +150,44 @@ export class AddVisitorScreen extends React.Component {
             <TextInput
               style={styles.addVisitorItemInput}
               placeholder="请输入车牌号"
+              value={this.state.carId}
               onChangeText={(carId) => this.setState({carId})}
             />
           </View>
         </View>
         <View style={styles.addVisitorBtnBox}>
           <TouchableNativeFeedback onPress={this._saveAndAdd}>
-            <LinearGradient colors={['#09B6FD', '#6078EA']} start={{x:0,y:0}} end={{x:1,y:0}} style={styles.addVisitorBtnAdd}>
+            {/*<LinearGradient colors={['#09B6FD', '#6078EA']} style={styles.addVisitorBtnAdd}>
               <Text style={styles.addVisitorBtnAddText}>保存并新增</Text>
-            </LinearGradient>
+            </LinearGradient>*/}
+            <View style={styles.addVisitorBtnAdd}>
+              <Text style={styles.addVisitorBtnAddText}>保存并新增</Text>
+            </View>
           </TouchableNativeFeedback>
           <Text
           onPress={this._saveAndBack}
           style={styles.addVisitorBtnBack}>保存并返回</Text>
         </View>
-        {/*<Drawer
-            sidebar={sidebar}
-            position="right"
-            open={true}
-            drawerRef={el => (this.drawer = el)}
-            onOpenChange={this.onOpenChange}
-            drawerBackgroundColor="#ccc"
-          >
-          <View>
-            <Button onPress={() => this.drawer && this.drawer.openDrawer()}>
-              Open drawer
-            </Button>
-            <WhiteSpace />
-          </View>
-        </Drawer>*/}
       </View>
+      
+      
     );
   }
 
 }
+
+
+const mapStateToProps = (state, ownProps)=>{
+  return {};
+}
+const mapDispatchToProps = (dispatch, ownProps) => {
+  return {
+    addPersonProps: (person) => dispatch(visitorActions.AddPersonAction(person)),
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(AddVisitorScreen);
+
 const styles = StyleSheet.create({
   backgroundImage: {
     width:'100%',
