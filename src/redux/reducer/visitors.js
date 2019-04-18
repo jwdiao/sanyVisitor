@@ -3,6 +3,7 @@ import _ from "lodash";
 import update from 'immutability-helper'
 
 const initialState = {
+  loginAccount:'',//登录账号
   visitorsList: [], // 访客列表
   currentVisitorObj: { // 当前新增对象
     id: Math.random()*1000,
@@ -116,6 +117,11 @@ export default visitors = (state = initialState, action) => {
         ...state,
         currentVisitorObj: nextState.currentVisitorObj
       }
+    }
+
+    // 登录账号
+    case actionTypes.LOGINACCOUNT: {
+      return Object.assign({}, state, { loginAccount: action.loginAccount})
     }
     
 

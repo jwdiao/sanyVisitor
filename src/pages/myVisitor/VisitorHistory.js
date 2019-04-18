@@ -23,6 +23,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 
 // ======redux相关======
 import * as visitorActions from '../../redux/actions/visitorActions'
+import {getVisitorHistoryReq} from '../../http/api'
 
 // ======顶部背景图片=======
 import {STATUS_BAR_HEIGHT,HEADER_HEIGHT} from '../../components/Header'
@@ -44,15 +45,27 @@ export class MyVisitorScreen extends React.Component {
     super(props);
     this.state = {
       loaded: false,
-      myVisitorList: []
+      myVisitorHistoryList: []
     }
-    this.fetchData = this.fetchData.bind(this)
   }
   componentDidMount () {
     // console.log(STATUS_BAR_HEIGHT + HEADER_HEIGHT)
     this.fetchData()
   }
   fetchData () {
+    getVisitorHistoryReq(1, 1000).then(res=> {
+      console.log('history:',res)
+      if(res&&res.code===200){
+        let result = res.data.list
+        this.setState({
+          myVisitorHistoryList: result,
+          loaded: true,
+        })
+      }
+    }).catch(res=>{
+      // 获取数据失败
+    }) 
+/*     return;
     setTimeout(()=>{
       const data = [
         {
@@ -85,44 +98,31 @@ export class MyVisitorScreen extends React.Component {
           visitCycle: '上午',
           visitorNum: 3,
           carNum: 3,
-          visitReason: '供应商来访'
-        },
-        {
-          id: '003',
-          uname: '李艳',
-          visitDate: '2019-04-05',
-          visitCycle: '上午',
-          visitorNum: 3,
-          carNum: 3,
-          visitReason: '供应商来访'
-        },
-        {
-          id: '004',
-          uname: '张鹏',
-          visitDate: '2019-04-05',
-          visitCycle: '上午',
-          visitorNum: 3,
-          carNum: 3,
-          visitReason: '供应商来访'
-        },
-        {
-          id: '005',
-          uname: '张鹏',
-          visitDate: '2019-04-05',
-          visitCycle: '上午',
-          visitorNum: 3,
-          carNum: 3,
-          visitReason: '供应商来访'
+          visitReason: '供应商来访',
+          persons: [
+            {
+              uName: '张三',
+              tel: '15625896541',
+              cardId: '411524789654123658',
+              carId: '京A78965'
+            },
+            {
+              uName: '张三1',
+              tel: '15625896541',
+              cardId: '411524789654123658',
+              carId: '京A78965'
+            }
+          ]
         }
       ]
       this.setState({
-        myVisitorList: data,
+        myVisitorHistoryList: data,
         loaded: true,
-        scrollOfssetY: 0
+        // scrollOfssetY: 0
       })
       // 将获取的数据存入redux
-      this.props.VisitorListProps(data);
-    },100)
+      // this.props.VisitorListProps(data);
+    },100) */
   }
   
   renderItems ({item,index}) { // 
@@ -131,7 +131,7 @@ export class MyVisitorScreen extends React.Component {
     let currentColor = borderColorArr[index%4]
     return (  
       <View style={styles.item}>
-        <Text style={[{borderColor:currentColor},styles.title]}>{item.uname}</Text>
+        <Text style={[{borderColor:currentColor},styles.title]}>{item.uName}</Text>
         <View style={styles.row}>
             <View style={styles.rowInner}>
               <Text style={styles.lable}>拜访开始时间</Text>
@@ -184,40 +184,48 @@ export class MyVisitorScreen extends React.Component {
     // 数据加载成功之前
     if (!this.state.loaded){
       return (
-        <View style={{display: 'flex',flex:1,flexDirection: 'column',justifyContent: 'center',alignItems:'center'}}>
-          <ActivityIndicator animating={true} color="green" size="large"></ActivityIndicator>
-          <Text style={{marginTop: 10}}>正在加载中...</Text>
-        </View>)
+        <View style={styles.MyVisitorWrapper}>
+          <ImageBackground source={require('../../assets/images/head_bg2.png')} style={styles.backgroundImage2}>          
+            <Header title="历史访客" left={leftV} fullScreen />
+          </ImageBackground>
+          <View style={styles.mainContainer}>
+            <ActivityIndicator animating={true} color="green" size="large"></ActivityIndicator>
+            <Text style={{marginTop: 10}}>正在加载中...</Text>
+          </View>
+        </View>
+      )
     }
 
     // 数据加载成功之后但是没有访客显示空页面
-    if (this.state.loaded && this.state.myVisitorList.length==0) {
+    if (this.state.loaded && this.state.myVisitorHistoryList.length==0) {
       return (
         <View style={styles.MyVisitorWrapper}>
-          <View style={styles.EmptyPage}>
-            <Image style={styles.EmptyPageImg} source={require('./img/noHistoryRecord.png')} />
+          <ImageBackground source={require('../../assets/images/head_bg2.png')} style={styles.backgroundImage2}>          
+          <Header title="历史访客" left={leftV} fullScreen />
+          </ImageBackground>
+          <View style={styles.mainContainer}>
+            <Image style={styles.EmptyPageImg} source={require('../../assets/images/noHistoryRecord.png')} />
             <Text style={styles.EmptyPageTip}>目前还没有历史记录！</Text>
           </View>
         </View>
-      );
+      )
     }
     // 数据加载成功之后显示访客列表
     return (
       <View style={styles.MyVisitorWrapper}>
-        <ImageBackground source={require('./img/head_bg1.png')} style={styles.backgroundImage}>          
+        <ImageBackground source={require('../../assets/images/head_bg1.png')} style={styles.backgroundImage}>          
             <Header title="历史访客" left={leftV} fullScreen />
         </ImageBackground>
-        <View style={styles.backgroundBg}></View>
+        {/* <View style={styles.backgroundBg}></View> */}
         <FlatList
           style={styles.list}
           contentContainerStyle={{paddingTop: px2dp(60),paddingBottom: 10}}
-          data={this.props.visitorsProps}
+          data={this.state.myVisitorHistoryList}
           renderItem={this.renderItems}
-          keyExtractor={item => item.id}
+          keyExtractor={item => (item.id).toString()}     
         />
       </View>    
-    )
-    
+    )   
   }
 
 }
@@ -226,7 +234,7 @@ const mapStateToProps = (store, ownProps) => {
   const {visitorsManage} = store;
   // console.log("current store:", store);
   return {
-    visitorsProps: visitorsManage.visitorsList
+    // visitorsProps: visitorsManage.visitorsList
   }
 }
 const mapDispatchToProps = (dispatch, ownProps) => {
@@ -241,30 +249,31 @@ export default connect(mapStateToProps,mapDispatchToProps)(MyVisitorScreen)
 
 const styles = StyleSheet.create({
   backgroundImage: {
-    width:'100%',height:px2dp(397),
-    position: 'absolute',top:-1,left:0,right:0,
-    zIndex:-1,
-    // backgroundColor: '#4487d6',
+    width:'100%',
+    height:px2dp(397),
+    position: 'absolute',top:-1,left:0,right:0,zIndex:-1
   },
   backgroundImage2: {
-    width:'100%',height:px2dp(128),
-    position: 'absolute',top:-1,left:0,right:0,
-    zIndex:-1,
-    // backgroundColor: '#4487d6',
+    width:'100%',
+    // height:px2dp(128),
+    position: 'absolute',top:-1,left:0,right:0,zIndex:-1,
   },
   backgroundBg: {
     backgroundColor: '#F1F4FF',
-    position: 'absolute',top:0,left:0,bottom:0,right:0,
-    zIndex:-2,
+    position: 'absolute',top:0,left:0,bottom:0,right:0,zIndex:-2,
   },
   MyVisitorWrapper: {
-    // backgroundColor: '#4487d6',
-    display: 'flex',
     flex: 1,
   },
+/*   MyVisitorWrapper2: {
+    display: 'flex',
+    flexDirection: 'column',
+    flex: 1,
+    backgroundColor: '#F1F4FF',
+    marginTop:STATUS_BAR_HEIGHT + HEADER_HEIGHT,
+  }, */
   list: {
     marginTop:STATUS_BAR_HEIGHT + HEADER_HEIGHT,
-    // backgroundColor: '#F1F4FF',
     paddingLeft: px2dp(38),
     paddingRight: px2dp(30),
   },
@@ -284,10 +293,7 @@ const styles = StyleSheet.create({
     paddingTop:px2dp(20),
     borderLeftWidth: px2dp(7),
     borderStyle: 'solid',
-    /**borderColor:'#4ccc94', */
-    // borderTopLeftRadius: px2dp(6),
-    paddingLeft: px2dp(24),
-    
+    paddingLeft: px2dp(24), 
   },
   row: {
     paddingLeft: px2dp(30),
@@ -306,19 +312,15 @@ const styles = StyleSheet.create({
     color: '#333',
     fontSize: px2dp(26)
   },
+
   // 空页面
-  EmptyPage: {
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    height:'100%',
-    width: '100%',
-    paddingLeft: px2dp(130),
-    paddingRight: px2dp(130),
+  // 内容居中容器
+  mainContainer: {
+    display: 'flex',flex:1,flexDirection: 'column',justifyContent: 'center',alignItems:'center'
   },
   EmptyPageImg: {
-    width: px2dp(212),
-    height: px2dp(241)
+    width: px2dp(260),
+    height: px2dp(226)
   },
   EmptyPageTitle: {
     fontSize: px2dp(38),
@@ -332,6 +334,5 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     lineHeight: px2dp(46),
     textAlign:'center',
-    
   }
 })

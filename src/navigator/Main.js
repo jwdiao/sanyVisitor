@@ -3,14 +3,14 @@ import {
   AsyncStorage,
   Button,
   StatusBar,
-  StyleSheet,
+  StyleSheet,Dimensions,
   View,
   Text,
   Platform,
   TouchableOpacity,
   Image
 } from 'react-native';
-import { createStackNavigator, createBottomTabNavigator } from 'react-navigation';
+import { createStackNavigator, createBottomTabNavigator,createDrawerNavigator } from 'react-navigation';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
@@ -218,7 +218,7 @@ const TabNavigator = createBottomTabNavigator(
   }
 );
 
-export const AppStack = createStackNavigator({
+export const AppStack = createDrawerNavigator({
   Tabs: {
     screen: TabNavigator,
     navigationOptions: {
@@ -263,12 +263,12 @@ export const AppStack = createStackNavigator({
       headerRight: <View />
     } */
   },
-  AddVisitor: {
+ /* AddVisitor: {
     screen: AddVisitorScreen,
     navigationOptions: {
       header: null
     }
-    /* navigationOptions: ({navigation}) =>{
+    /!* navigationOptions: ({navigation}) =>{
       return ({
         title: '信息录入',
         headerRight: <View />,
@@ -289,8 +289,8 @@ export const AppStack = createStackNavigator({
         headerTintColor: '#fff',
         headerStyle: platformContainerStyles
       })
-    } */
-  },
+    } *!/
+  },*/
   EditPeople: {
     screen: EditPeopleScreen,
     navigationOptions: {
@@ -318,23 +318,24 @@ export const AppStack = createStackNavigator({
       // title: '测试页面',
       // headerRight: <View />
     }
-  }
+  },
+
 },
-{
-  initialRouteName: 'Tabs',
-  defaultNavigationOptions: {
-    headerTitleStyle: {
-      flex: 1,
-      textAlign: 'center',
-    },
-    
-    headerTintColor: '#fff',
-    headerStyle: {
-      
-    }
-  }
-},
+  {
+    animationEnabled:true,
+    initialRouteName: 'Tabs',
+    swipeEnabled: true,
+    lazy: false,
+    drawerWidth:Dimensions.get('window').width *0.9, // 抽屉宽
+    drawerPosition: 'right', // 抽屉在左边还是右边
+    contentComponent: AddVisitorScreen ,  // 自定义抽屉组件
+  },
+
 );
+
+export const DrawerNav = createDrawerNavigator({
+  AppStackPage1: { screen:AddVisitorScreen }
+});
 
 
 const styles = StyleSheet.create({

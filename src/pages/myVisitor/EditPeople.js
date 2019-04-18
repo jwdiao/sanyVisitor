@@ -4,7 +4,7 @@ import {
   Text,
   StyleSheet,
   TextInput,
-  TouchableNativeFeedback,
+  TouchableHighlight,
   ImageBackground,
   TouchableOpacity
 } from 'react-native';
@@ -56,8 +56,6 @@ export class EditVisitorScreen extends React.Component {
       cardId: this.state.cardId,
       carId: this.state.carId
     }
-    // 调用接口新增1条
-    // this.props.EditPersonProps(initCurrentVisitorObj)
     this.props.navigation.navigate('RecordVisitor');
     this.props.EditSAVEPersonProps(initCurrentVisitorObj)
     
@@ -66,7 +64,7 @@ export class EditVisitorScreen extends React.Component {
   render() {
     const leftV =  (
       <View>
-        <TouchableOpacity activeOpacity={1} onPress={() =>this.props.navigation.goBack()} style={{display:'flex',flexDirection:'row',alignItems:'center'}}>
+        <TouchableOpacity activeOpacity={1} onPress={() =>this.props.navigation.navigate('RecordVisitor')} style={{display:'flex',flexDirection:'row',alignItems:'center'}}>
           <FontAwesome name={'angle-left'} size={32} color={"#fff"} style={styles.recordVisitorArrow} />
           <Text style={{color:'#fff',marginLeft:4,fontSize:16}}>返回</Text>
         </TouchableOpacity>
@@ -75,7 +73,7 @@ export class EditVisitorScreen extends React.Component {
     return (
       
       <View style={styles.addVisitorWrapper}>
-        <ImageBackground source={require('./img/head_bg2.png')} style={styles.backgroundImage}>          
+        <ImageBackground source={require('../../assets/images/head_bg2.png')} style={styles.backgroundImage}>          
           <Header title="信息编辑" left={leftV} fullScreen />
         </ImageBackground>
         <View style={styles.addVisitorForm}>
@@ -117,20 +115,19 @@ export class EditVisitorScreen extends React.Component {
           </View>
         </View>
         <View style={styles.delAndCancleBtnBox}>
-          <TouchableNativeFeedback onPress={() => this._saveOpt()}>
+          <TouchableHighlight onPress={() => this._saveOpt()} style={styles.delBtnBox}>
             <LinearGradient
               start={{x: 0, y: 0}} end={{x: 1, y: 0}}
               colors={['#09B6FD', '#6078EA']} style={styles.delBtnBox}>
               <Text style={styles.delBtn}>保存</Text>
             </LinearGradient>
-          </TouchableNativeFeedback>
+          </TouchableHighlight>
         </View>
       </View>
       
       
     );
   }
-
 }
 
 
@@ -199,12 +196,12 @@ const styles = StyleSheet.create({
       bottom: 0,
       left: 0,
       right:0,
-      zIndex: 6,
+      width: '100%',
       
     },
     delBtnBox: {
       flex: 1,
-      textAlign: 'center',
+      backgroundColor:'#ff0'
     },
     delBtn: {
       textAlign: 'center',
@@ -213,43 +210,4 @@ const styles = StyleSheet.create({
       height: px2dp(88),
       lineHeight: px2dp(88),
     },
-    cancleBtn: {
-      flex: 1,
-      textAlign: 'center',
-      backgroundColor: '#fff',
-      fontSize: px2dp(32),
-      height: px2dp(88),
-      lineHeight: px2dp(88),
-      color: '#333333',
-    },
-/*   addVisitorBtnBox: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right:0,
-  },
-  addVisitorBtnAdd: {
-    flex: 1,
-    textAlign: 'center',
-    backgroundColor:'#6078ea',
-  },
-  addVisitorBtnAddText: {
-    textAlign: 'center',
-    fontSize: px2dp(32),
-    color: '#fff',
-    height: px2dp(88),
-    lineHeight: px2dp(88),
-  },
-  addVisitorBtnBack: {
-    flex: 1,
-    textAlign: 'center',
-    backgroundColor: '#fff',
-    fontSize: px2dp(32),
-    color: '#333333',
-    height: px2dp(88),
-    lineHeight: px2dp(88),
-  } */
 })

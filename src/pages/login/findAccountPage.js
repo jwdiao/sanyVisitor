@@ -42,11 +42,15 @@ export class FindAccountPage extends React.Component {
     isShowRegNum:false,  //获取验证码
     isShowSixthTimes:false,//倒计时
     isShowReNewPwd:false,//两次密码输入不一致
+		isyzmText:false,//验证码校验
+		isNewPwdText:false,//新密码
     sixthTimes:60,
     newPwd:'', //新密码
     telephone:'',//手机号
     exgRegText:'',//验证码
-
+		firstText:'',//第一行文本
+    isTel:false,
+		isPhone:false,
     reNewPwd:"",//重新输入密码
     modalVisible:false,//修改成功模态框
     isEditTel:true,//电话号码获取短信后是否可以编辑
@@ -65,9 +69,23 @@ export class FindAccountPage extends React.Component {
       </View>
     )
     const {sixthTimes,isEditTel,newPwd} = this.state
+		let telView = this.state.isTel ?  <TextInput  secureTextEntry={false}  placeholder="" onChangeText = {this._phoneChange}/>
+		  : <TextInput  secureTextEntry={false}  placeholder="请输入登录账号域名或手机号" onChangeText = {this._phoneChange}/>
+		let telText = this.state.isTel ? <Text>请输入登录账号域名或手机号</Text>:null
+		let phoneView = this.state.isPhone ? <TextInput  secureTextEntry={false} keyboardType='number-pad' //键盘只显示数字
+                       placeholder="" maxLength={11} editable={isEditTel} onChangeText={this._telephoneChage}/>:
+											 <TextInput  secureTextEntry={false} keyboardType='number-pad' //键盘只显示数字
+											            placeholder="请输入手机号" maxLength={11} editable={isEditTel} onChangeText={this._telephoneChage}/>
+		let yzmView = this.state.isyzmText?<TextInput secureTextEntry={false}  placeholder="" keyboardType='number-pad' onChangeText={this._regExpNumChage} />:
+		                                   <TextInput secureTextEntry={false}  placeholder="请输入验证码" keyboardType='number-pad' onChangeText={this._regExpNumChage} />
+		let newPwdView = this.state.isNewPwdText ? <TextInput  defaultValue={newPwd}  secureTextEntry placeholder="" onChangeText={this._newPwdChange} />:
+		                                           <TextInput  defaultValue={newPwd}  secureTextEntry placeholder="请输入新密码" onChangeText={this._newPwdChange} />
+		let newPwdText = this.state.isNewPwdText?<Text>请输入新密码</Text>:null
+		let phoneText = this.state.isPhone?<Text>请输入手机号</Text>:null
     let regNum = this.state.isShowRegNum ? <Text>获取验证码</Text> : null
     let sixthTimesText = this.state.isShowSixthTimes ? <Text>{sixthTimes}S</Text> : null
     let ReNewPwdText = this.state.isShowReNewPwd ? <Text>两次密码输入不一致</Text> : null
+		let yzmText = this.state.isyzmText ? <Text>请输入验证码</Text> : null
     let ReNewPwdView = this.state.isShowReNewPwd ? <TextInput clearButtonMode='always' defaultValue={this.state.reNewPwd} secureTextEntry  onChangeText={this._reNewPwdChange} onBlur={this._reNewPwdBlur}/>
       : <TextInput clearButtonMode='always' defaultValue={this.state.reNewPwd} secureTextEntry placeholder="请确认新密码" onChangeText={this._reNewPwdChange} onBlur={this._reNewPwdBlur}/>
     const {height,width} = Dimensions.get('window')
@@ -82,19 +100,25 @@ export class FindAccountPage extends React.Component {
         <View>
           <View style={styles.inputsTextFirst}>
             {/*clearButtonMode='white-editing'*/}
-            <TextInput  secureTextEntry={false}  placeholder="请输入登录账号域名或手机号"/>
+						{telView}
+						<Text style={styles.isTwoPwdSame} onPress={this._telPress}>{telText}</Text>
+            {/*<Text style={styles.isTwoPwdSame}>请输入验证码{ReNewPwdText}</Tetx>*/}
           </View>
           <View style={styles.inputsText}>
-            <TextInput  secureTextEntry={false} keyboardType='number-pad' //键盘只显示数字
-                       placeholder="请输入手机号" maxLength={11} editable={isEditTel} onChangeText={this._telephoneChage}/>
+            {phoneView}
+						<Text style={styles.isTwoPwdSame} onPress={this._phonePress}>{phoneText}</Text>
             <Text style={styles.reqRegNum} onPress={this._clickReqRegNum}>{regNum}</Text>
             <Text style={styles.reqRegNumTime}>{sixthTimesText}</Text>
           </View>
-          <View style={styles.inputsText}>
-            <TextInput secureTextEntry={false}  placeholder="请输入验证码" keyboardType='number-pad' onChangeText={this._regExpNumChage}/>
+					{/*验证码*/}
+          <View style={styles.inputsText} >
+            {yzmView}
+						<Text style={styles.isTwoPwdSame} onPress={this._textOnpress}>{yzmText}</Text>
           </View>
           <View style={styles.inputsText}>
-            <TextInput  defaultValue={newPwd}  secureTextEntry placeholder="请输入新密码" onChangeText={this._newPwdChange}/>
+					  {newPwdView}
+						<Text style={styles.isTwoPwdSame} onPress={this._newPwdPress}>{newPwdText}</Text>
+						{/*<TextInput  defaultValue={newPwd}  secureTextEntry placeholder="请输入新密码" onChangeText={this._newPwdChange}/>*/}
           </View>
           <View style={styles.inputsText}>
             {ReNewPwdView}
@@ -106,11 +130,11 @@ export class FindAccountPage extends React.Component {
           <WingBlank>
             <View style={{alignItems:"center"}}>
               <LinearGradient colors={['#09B6FD', '#6078EA']} start={{x:0,y:0}} end={{x:1,y:0}} style={styles.submitStyle}>
-                <TouchableNativeFeedback  onPress={this._findPassword}>
+                <TouchableOpacity  onPress={this._findPassword}>
                   <View style={styles.submitStyleView} disabled={true}>
                     <Text style={{color:'#fff',fontSize:20}}>确定</Text>
                   </View>
-                </TouchableNativeFeedback>
+                </TouchableOpacity>
               </LinearGradient>
             </View>
           </WingBlank>
@@ -145,24 +169,74 @@ export class FindAccountPage extends React.Component {
   }
   //点击确定按钮
   _findPassword = async () => {
-    const {newPwd,telephone,exgRegText} = this.state
+    const {newPwd,telephone,exgRegText,firstText} = this.state
+    //this._setModalVisible(true)
     //提交修改信息给后台
-    regSubmitNewPwd(newPwd,exgRegText,telephone).then(res=>{
-      if(res&&res.code===200){
-        console.warn('res:',res.code)
-        //修改成功后出现模态框
-        this._setModalVisible(true)
-        //清空输入框内容
-      }else{
-        Alert.alert(res.msg)
-      }
-    }).catch(res=>{
-      Toast.info('修改失败',3)
-    })
-
-
-
+		if(telephone==''){
+			this.setState({isPhone:true})
+		}
+		if(firstText==''){
+			this.setState({
+				isTel:true
+			})
+		}
+		if(exgRegText==''){
+			this.setState({
+				isyzmText:true
+			})
+		}
+		if(newPwd == ''){
+			this.setState({
+				isNewPwdText:true
+			})
+		}
+		if(newPwd!=''&&exgRegText!=''&&telephone!=''){
+			 regSubmitNewPwd(newPwd,exgRegText,telephone).then(res=>{
+			   if(res&&res.code===200){
+			     console.warn('res:',res.code)
+			     //修改成功后出现模态框
+			     this._setModalVisible(true)
+			     //清空输入框内容
+			   }else{
+			     Alert.alert(res.msg)
+			   }
+			 }).catch(res=>{
+			   Toast.info('修改失败',3)
+			 })
+		}
   };
+	
+	//点击第一行
+	_telPress = () => {
+		this.setState({
+			isTel:false
+		})
+	}
+	//点击第二行
+	_phonePress = () => {
+		this.setState({
+			isPhone:false
+		})
+	}
+	//第三行点击时间
+  _textOnpress = () => {
+		
+		this.setState({
+			isyzmText:false
+		})
+	} 
+	//第一行文本输入事件
+	_phoneChange = (text) => {
+		this.setState({
+			firstText:text
+		})
+	}
+	//第四行点击事件
+	_newPwdPress = () => {
+		this.setState({
+			isNewPwdText:false
+		})
+	}
   //点击登录按钮
   _goBackLogin = () => {
     this._setModalVisible(false)

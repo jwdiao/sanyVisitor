@@ -70,3 +70,10 @@ export const DeletePersonAction = function(id) {
     id
   })
 }
+
+export const loginAccountAction = function(numbers){
+  return({
+    type: actionTypes.LOGINACCOUNT,
+    numbers,
+  })
+}

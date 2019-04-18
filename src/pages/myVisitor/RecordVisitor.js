@@ -10,11 +10,14 @@ import {
   TouchableNativeFeedback,
   DatePickerAndroid,
   StatusBar,
+  DeviceEventEmitter,
   ImageBackground,
   TouchableOpacity
 } from 'react-native';
 import {connect} from 'react-redux';
-import { Drawer, List, WhiteSpace } from '@ant-design/react-native';
+import { Drawer, List, WhiteSpace, DatePicker,Provider,Picker } from '@ant-design/react-native';
+import {Navigation} from 'react-native-navigation';
+import {NavigationActions,DrawerActions} from 'react-navigation';
 
 
 
@@ -22,9 +25,10 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import LinearGradient from 'react-native-linear-gradient';
-import Picker from 'react-native-picker'
+// import Picker from 'react-native-picker'
 
 
+import {addVisitorObjReq} from '../../http/api'
 import {px2dp} from "../../utils/ScreenUtil";
 import * as visitorActions from '../../redux/actions/visitorActions'
 
@@ -74,11 +78,13 @@ export class RecordVisitorScreen extends React.Component {
     this.state = {
       /* visitDate: '', // 拜访日期
       visitCycle: ['上午'], // 拜访周期
-      visitorNum: '', // 拜访人数
-      carNum: '', // 驾车数量 */
+      visitorNum: '', // 拜访人数 */
+      carNum: '', // 驾车数量
       visitReason: '', // 拜访原因
       // isChecked: false,
       // visitorList: [],
+      dateValue: new Date(),
+      visitCycle: ['上午']
     }
   }
   componentDidMount () {
@@ -117,6 +123,79 @@ export class RecordVisitorScreen extends React.Component {
     }) */
     
   }
+ /*  _createDateData() {
+    let date = [];
+    for(let i=2016;i<2116;i++){
+        let month = [];
+        for(let j = 1;j<13;j++){
+            let day = [];
+            if(j === 2){
+                for(let k=1;k<29;k++){
+                    day.push(k+'日');
+                }
+                //Leap day for years that are divisible by 4, such as 2000, 2004
+                if(i%4 === 0){
+                    day.push(29+'日');
+                }
+            }
+            else if(j in {1:1, 3:1, 5:1, 7:1, 8:1, 10:1, 12:1}){
+                for(let k=1;k<32;k++){
+                    day.push(k+'日');
+                }
+            }
+            else{
+                for(let k=1;k<31;k++){
+                    day.push(k+'日');
+                }
+            }
+            let _month = {};
+            _month[j+'月'] = day;
+            month.push(_month);
+        }
+        let _date = {};
+        _date[i+'年'] = month;
+        date.push(_date);
+    }
+    return date;
+  };
+  _showDatePicker= async () =>  {
+    const visitDates = this.props.currentVisitorObjProps.visitDate
+    // const visitDateStr = 
+      Picker.init({
+        pickerData: this._createDateData(),
+        pickerConfirmBtnText:'完成',
+        pickerCancelBtnText:'取消',
+        pickerTitleText:null,
+        pickerBg:[255,255,255,1],
+        pickerFontColor: [255, 0 ,0, 1],
+        pickerToolBarBg:[169,169,169,.1],
+        pickerFontColor:[0,0,0,1],
+        pickerConfirmBtnColor:[0,0,0,1],
+        pickerCancelBtnColor:[0,0,0,1],
+        pickerFontSize:19,
+        pickerToolBarFontSize:15,
+        selectedValue:['2019年','12月','08日'],
+        // selectedValue:[],
+        onPickerConfirm: (pickedValue, pickedIndex) => {
+          // console.log('date', pickedValue, pickedIndex);
+          let dateStr = pickedValue[0].substr(0,4) + '/' + pickedValue[1].slice(0,-1) + '/' + pickedValue[2].slice(0,-1)
+          let dateObj = new Date(dateStr)
+
+          const initCurrentVisitorObj = { // 当前新增对象
+            ...this.props.currentVisitorObjProps,
+            visitDate: dateObj.Format('yyyy-MM-dd'),
+          }
+          this.props.VisitorObjProps(initCurrentVisitorObj)
+        },
+        onPickerCancel: (pickedValue, pickedIndex) => {
+            // console.log('date', pickedValue, pickedIndex);
+        },
+        onPickerSelect: (pickedValue, pickedIndex) => {
+            // console.log('date', pickedValue, pickedIndex);
+        }
+      });
+      Picker.show();
+  }
   _openDatePicker = async () => {
     try {
       const {
@@ -127,9 +206,6 @@ export class RecordVisitorScreen extends React.Component {
       if (action !== DatePickerAndroid.dismissedAction) {
         let dateStr = year + '/' + (month+1) + '/' + day
         let dateObj = new Date(dateStr)
-        /* this.setState({
-          visitDate: dateObj.Format('yyyy-MM-dd')
-        }) */
 
         const initCurrentVisitorObj = { // 当前新增对象
           ...this.props.currentVisitorObjProps,
@@ -146,6 +222,17 @@ export class RecordVisitorScreen extends React.Component {
       pickerTitleText: '',
       pickerData: ['上午','下午','全天'],
       selectedValue: this.props.currentVisitorObjProps.visitCycle,
+      pickerConfirmBtnText:'完成',
+			pickerCancelBtnText:'取消',
+			pickerTitleText:null,
+			pickerBg:[255,255,255,1],
+      pickerFontColor: [255, 0 ,0, 1],
+			pickerToolBarBg:[169,169,169,.1],
+			pickerFontColor:[0,0,0,1],
+			pickerConfirmBtnColor:[0,0,0,1],
+			pickerCancelBtnColor:[0,0,0,1],
+			pickerFontSize:19,
+			pickerToolBarFontSize:15,
       onPickerConfirm: data => {
         // this.setState({visitCycle: data})
         const initCurrentVisitorObj = { // 当前新增对象
@@ -160,18 +247,22 @@ export class RecordVisitorScreen extends React.Component {
       }
     })
     Picker.show()
-  };
+  }; */
+
+
   handleVisitReasonFun = (reason) => {
     console.log('reason:',reason)
   }
 
   _addVisitorPage = async () => {
-    this.props.navigation.navigate('AddVisitor');
+    // this.props.navigation.navigate('AddVisitor');
+    this.props.navigation.dispatch(DrawerActions.openDrawer());
+    // this.props.navigation.navigate('DrawerOpen');
     // this.props.navigation.openDrawer()
   }
-  _openAddVisitorPage = () => {
-    this.drawer && this.drawer.openDrawer()
-  }
+  // _openAddVisitorPage = () => {
+  //   this.drawer && this.drawer.openDrawer()
+  // }
 
   // 保存按钮
   _saveOpt () {
@@ -202,18 +293,58 @@ export class RecordVisitorScreen extends React.Component {
     // 调接口新增一条数据
     // 将返回的该条数据加入到redux中
     // this.props.addVisitorProps(itemObj);
+    let visitCycleFlag = '01'
+    if((this.state.visitCycle)[0]=='下午'){
+      visitCycleFlag = '02'
+    }if((this.state.visitCycle)[0]=='全天'){
+      visitCycleFlag = '03'
+    } else {
+      visitCycleFlag = '01'
+    }
     const initCurrentVisitorObj = { // 当前新增对象
       ...this.props.currentVisitorObjProps,
-      id: Math.random().toString(),
+      carNum: this.state.carNum,
       visitReason: this.state.visitReason,
+      // visitDate: (this.state.dateValue).Format('yyyy-MM-dd'),
+      visitDate: "2019-05-25T04:27:57.350Z",
+      visitCycle: visitCycleFlag,
+      visitorNum: this.props.currentVisitorObjProps.persons.length,
+      source: "1"
     }
-    this.props.VisitorObjProps(initCurrentVisitorObj)
-    // this.props.addVisitorProps(this.props.currentVisitorObjProps);
-    this.props.addVisitorProps(initCurrentVisitorObj);
-    this.props.navigation.navigate('MyVisitorIndex');
+
+    
+    addVisitorObjReq(initCurrentVisitorObj).then(res=> {
+      if(res&&res.code===200){
+        // this.props.VisitorObjProps(initCurrentVisitorObj)
+        // this.props.addVisitorProps(initCurrentVisitorObj);
+
+        // 清空数据
+        this.setState({
+          carNum: '',
+          visitReason: '',
+          dateValue: new Date(),
+          visitCycle: ['上午']
+        })
+        const initCurrentVisitorObjEmpty = { // 当前新增对象
+          visitDate: new Date().Format('yyyy-MM-dd'),
+          visitCycle: ['上午'],
+          visitorNum: '',
+          carNum: '',
+          visitReason: '',
+          persons: []
+        }
+        this.props.VisitorObjProps(initCurrentVisitorObjEmpty)
+        this.props.navigation.navigate('MyVisitorIndex');
+        console.log('新增成功:',res)
+        DeviceEventEmitter.emit('UPDATE_VISITOR_LIST') // 刷新列表数据
+      }
+    }).catch(res=>{
+      // 获取数据失败
+      console.log('新增失败：',res)
+    })
   }
 
-  // 取消按钮
+  // 取消按钮（取消选中checkbox）
   _cancelBtnOpt () {
     let personArr = this.props.currentVisitorObjProps.persons
     for(var i=0;i<personArr.length;i++){
@@ -222,7 +353,7 @@ export class RecordVisitorScreen extends React.Component {
       }
     }
   }
-  // 删除按钮
+  // 删除按钮（删除当前访客）
   _delOpt () {
     let personArr = this.props.currentVisitorObjProps.persons
     for(var i=0;i<personArr.length;i++){
@@ -238,7 +369,7 @@ export class RecordVisitorScreen extends React.Component {
   }
   // 编辑访客人员
   handleEditPeople (person) {
-    console.log('item:',person)
+    // console.log('item:',person)
     this.props.navigation.navigate('EditPeople');
     this.props.EditPersonProps(person)
   }
@@ -288,6 +419,7 @@ export class RecordVisitorScreen extends React.Component {
   }
 
   render() {
+    // 左侧返回按钮
     const leftV =  (
       <View>
         <TouchableOpacity activeOpacity={1} onPress={() =>this.props.navigation.goBack()} style={{display:'flex',flexDirection:'row',alignItems:'center'}}>
@@ -296,17 +428,42 @@ export class RecordVisitorScreen extends React.Component {
         </TouchableOpacity>
       </View>
     )
-    const {
+    /* const {
       visitDate,
       visitCycle,
       visitorNum,
       carNum,
       visitReason,
       persons
-    } =  this.props.currentVisitorObjProps
+    } =  this.props.currentVisitorObjProps */
+
+    // 拜访日期自定义
+    const CustomChildren = props => (
+      <View style={styles.recordVisitorItem}>
+        <Text style={styles.recordVisitorLabel}>拜访日期</Text>
+        <TouchableOpacity activeOpacity={1} onPress={props.onPress}>
+          <View style={styles.recordVisitorItemRight}>
+            <Text style={styles.recordVisitorVal}>{(this.state.dateValue).Format('yyyy-MM-dd')}</Text>
+            <FontAwesome name={'angle-right'} size={24} color={"#7a7a7f"} style={styles.recordVisitorArrow} />
+          </View>
+        </TouchableOpacity>
+      </View>
+    )
+    // 拜访周期自定义
+    const CustomChildrenPeriod = props => (
+      <View style={styles.recordVisitorItem}>
+        <Text style={styles.recordVisitorLabel}>拜访周期</Text>
+        <TouchableOpacity activeOpacity={1} onPress={props.onPress}>
+          <View style={styles.recordVisitorItemRight}>
+            <Text style={styles.recordVisitorVal}>{this.state.visitCycle}</Text>
+            <FontAwesome name={'angle-right'} size={24} color={"#7a7a7f"} style={styles.recordVisitorArrow} />
+          </View>
+        </TouchableOpacity>
+      </View>
+    )
     return (
     <View style={{flex:1,backgroundColor:'#F3F3F3'}}>
-      <ImageBackground source={require('./img/head_bg2.png')} style={styles.backgroundImage}>          
+      <ImageBackground source={require('../../assets/images/head_bg2.png')} style={styles.backgroundImage}>          
         <Header title="增加访客" left={leftV} fullScreen />
       </ImageBackground>
       <LinearGradient colors={['#6078EA', '#09B6FD']} style={styles.addVisitorBtn}>
@@ -314,17 +471,49 @@ export class RecordVisitorScreen extends React.Component {
           <Text style={styles.addVisitorBtnText}>新增访客</Text>
         </TouchableNativeFeedback>
       </LinearGradient>
-     
+
+      {/* <Provider>
+        <View>
+          <List>
+            <DatePicker
+              value={undefined}
+              mode="date"
+              minDate={new Date(2015,7,6)}
+              maxDate={new Date(2026,11,3)}
+              format="YYYY-MM-DD"
+            >
+              <List.Item arrow="horizontal">Select Date</List.Item>
+            </DatePicker>
+          </List>
+        </View>
+      </Provider> */}
+
       {/* 底部按钮 start */}
       {this.renderBottomBtn()}
       {/* 底部按钮 end */}
+      <Provider>
       <ScrollView style={styles.recordVisitorWrapperBox}>
+      
         <View style={styles.recordVisitorWrapper}>
           {/* 顶部列表 start */}
           <View style={styles.recordVisitorList}>
-            <View style={styles.recordVisitorItem}>
+              <DatePicker
+              value={this.state.dateValue}
+              mode="date"
+              minDate={new Date(2010,1,1)}
+              maxDate={new Date(2090,11,31)}
+              // onChange={(V)=>this.setState({dateValue:V})}
+              format="YYYY-MM-DD"
+              onOk={(V)=>this.setState({dateValue:V})}
+              // itemStyle={{fontSize:15,height:34,lineHeight:34}}
+              >
+                <CustomChildren></CustomChildren>
+              </DatePicker>
+            {/* <View style={styles.recordVisitorItem}>
               <Text style={styles.recordVisitorLabel}>拜访日期</Text>
-              <TouchableNativeFeedback onPress={this._openDatePicker}>
+              <TouchableHighlight onPress={this._openDatePicker}>
+              <TouchableOpacity activeOpacity={1} onPress={this._showDatePicker}>
+              <TouchableHighlight onPress={this._openDatePicker}>
                 <View style={styles.recordVisitorItemRight}>
                 <Text style={styles.recordVisitorVal}>{visitDate}</Text>
                 <FontAwesome name={'angle-right'} size={24} color={"#7a7a7f"} style={styles.recordVisitorArrow} />
@@ -332,28 +521,55 @@ export class RecordVisitorScreen extends React.Component {
               </TouchableNativeFeedback>
             </View>
             <View style={styles.recordVisitorItem}>
+              </TouchableHighlight>
+            </View>
+            <View style={styles.recordVisitorItem}>
+              </TouchableOpacity>
+            </View> */}
+            {/* <View style={styles.recordVisitorItem}>
               <Text style={styles.recordVisitorLabel}>拜访周期</Text>
               <TouchableNativeFeedback onPress={this._openPeriodPicker}>
+              <TouchableHighlight onPress={this._openPeriodPicker}>
+              <TouchableOpacity onPress={this._openPeriodPicker}>
                 <View style={styles.recordVisitorItemRight}>
                   <Text style={styles.recordVisitorVal}>{visitCycle}</Text>
                   <FontAwesome name={'angle-right'} size={24} color={"#7a7a7f"} style={styles.recordVisitorArrow} />
                 </View>
               </TouchableNativeFeedback>
             </View>
-
+              </TouchableHighlight>
+            </View>
+            </View> */}
+            
+            <Picker
+              data={[{label:'上午',value:'上午'},{label:'下午',value:'下午'},{label:'全天',value:'全天'}]}
+              cols={1}
+              value={this.state.visitCycle}
+              onChange={(V)=>this.setState({visitCycle:V})}
+              onOk={(V)=>this.setState({visitCycle:V})}
+              // itemStyle={{fontSize:15,height:26,lineHeight:26}}
+              >
+                <CustomChildrenPeriod></CustomChildrenPeriod>
+              </Picker>
             <View style={styles.recordVisitorItem}>
               <Text style={styles.recordVisitorLabel}>拜访人数</Text>
               <View style={styles.recordVisitorItemRight}>
-                {/* <Text style={styles.recordVisitorVal}>{this.props.currentVisitorObjProps.persons.length}</Text> */}
-                <FontAwesome name={'angle-right'} size={24} color={"#7a7a7f"} style={styles.recordVisitorArrow} />
+                <Text style={styles.recordVisitorVal}>{this.props.currentVisitorObjProps.persons.length}</Text>
+                {/* <FontAwesome name={'angle-right'} size={24} color={"#7a7a7f"} style={styles.recordVisitorArrow} /> */}
               </View>
             </View>
 
             <View style={styles.recordVisitorItem}>
               <Text style={styles.recordVisitorLabel}>驾车数量</Text>
               <View style={styles.recordVisitorItemRight}>
-                <Text style={styles.recordVisitorVal}>{carNum}</Text>
-                <FontAwesome name={'angle-right'} size={24} color={"#7a7a7f"} style={styles.recordVisitorArrow} />
+                {/* <Text style={styles.recordVisitorVal}>{carNum}</Text> */}
+                {/* <FontAwesome name={'angle-right'} size={24} color={"#7a7a7f"} style={styles.recordVisitorArrow} /> */}
+                <TextInput
+                  style={styles.recordVisitorItemInput}
+                  placeholder="请输入驾车数量"
+                  value={this.state.carNum}
+                  onChangeText={(carNum) => this.setState({carNum})}
+                />
               </View>
             </View>
 
@@ -421,6 +637,7 @@ export class RecordVisitorScreen extends React.Component {
           {/* checkbox end */}          
         </View> 
       </ScrollView>
+      </Provider>
     </View>
     );
   }
@@ -504,16 +721,23 @@ const styles = StyleSheet.create({
   recordVisitorLabel: {
     fontSize: px2dp(28),
     color: '#1a1a1a',
-    opacity: 0.9
+    opacity: 0.9,
+    marginRight:10
   },
   recordVisitorItemRight: {
     display: 'flex',
     flexDirection: 'row',
-    alignItems: 'center',   
+    alignItems: 'center',
+    justifyContent:'flex-end',
+    // backgroundColor:'#ff0',
+    flex:1,
   },
   recordVisitorItemInput: {
     paddingTop:0,
     paddingBottom: 0,
+    flex:1,
+    textAlign:'right',
+    justifyContent:'flex-end'
   },
   recordVisitorVal: {
     fontSize: px2dp(26),

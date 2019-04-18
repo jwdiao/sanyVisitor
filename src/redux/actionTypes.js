@@ -10,5 +10,7 @@ export const VISITORSAPP_EDITSAVE_VISITOR_MEMBER = '保存编辑访客成员'; /
 export const VISITORSAPP_DELETE_VISITOR_MEMBER = '删除访客成员'; // 完成
 export const VISITORSAPP_CANCLECHECKED_VISITOR_MEMBER = '取消选中访客成员'; // 正在开发中
 
+export const LOGINACCOUNT = 'loginaccount'; // 登录账号
+
 
 

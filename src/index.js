@@ -15,7 +15,7 @@ import store from './store';
  * animated 设置当状态栏的状态发生变化时，是否需要加入动画
  */
 export const App = () => {
-  console.log('store', store);
+  // console.log('store', store);
   return (
     <Provider store={store} >
       <View style={{flex: 1}}>

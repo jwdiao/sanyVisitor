@@ -1,24 +1,25 @@
 import React from 'react';
 import {
-  AsyncStorage, ImageBackground, Modal,TouchableNativeFeedback,
+  AsyncStorage, ImageBackground, Modal,TouchableNativeFeedback,TouchableHighlight,
   Button, Image, ScrollView, TouchableOpacity,
   View, Text, TextInput, StyleSheet, Dimensions,
   StatusBar
 } from 'react-native';
 // import {BoxShadow} from 'react-native-shadow'
 import LinearGradient from 'react-native-linear-gradient'
-// import Svg from 'react-native-svg'
-// import Svg from '../../Component/Svg';
-// import svgs from '../../assets/svgs';
+import SvgUri from 'react-native-svg-uri'
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons'
+import iconfont from '../../../android/app/src/main/assets/fonts/iconfont.ttf'
+
 
 
 import {LoginRequest} from '../../http/api'
 
 import { setStatusBar } from '../../components/HOC/StatusBar'
+import storage from '../../storage/RNAsyncStorage'
 @setStatusBar({
   barStyle: 'light-content',
   translucent: true,
@@ -86,8 +87,12 @@ export class SignInScreen extends React.Component {
       keyboardShouldPersistTaps='never'>
       <ImageBackground source={require('./images/beijing.png')} style={styles.backgroundImage}>          
         <View>
-          <Image source={require('./images/sanylogo.png')}/>
+          {/*<Image source={require('./images/sanylogo.png')}/>*/}
+		  {/*<SvgUri width='200' height='60' fill='#fff' source={require('../../assets/Svg/sanyLogoWhite.svg')}/>*/}
+					
+
           <View style={{alignItems:'center'}}>
+		    <Text style={[{fontFamily:'iconfont'},{color:'#fff',fontSize:60}]}>&#xe606;</Text>
             <Text style={styles.logoTitle}>园区人员车辆管理</Text>
           </View>
         </View>
@@ -140,11 +145,11 @@ export class SignInScreen extends React.Component {
               <Text style={{fontSize:24,fontWeight:'bold',marginBottom:20,}}>登录失败</Text>
               <Text style={{fontSize:18,}}>帐号或登录密码错误，请重新输入</Text>
               <LinearGradient colors={['#09B6FD', '#6078EA']} start={{x:0,y:0}} end={{x:1,y:0}} style={styles.goBackLogin}>
-                <TouchableNativeFeedback onPress={this._goBackLogin}>
+                <TouchableHighlight onPress={this._goBackLogin}>
                   <View style={styles.goBackLoginView}>
                     <Text  style={{fontSize:20,color:'#fff',}}>确定</Text>
                   </View>
-                </TouchableNativeFeedback>
+                </TouchableHighlight>
               </LinearGradient>
 
             </View>
@@ -156,7 +161,7 @@ export class SignInScreen extends React.Component {
   }
 
 
-  _signInAsync = async () => {
+  _signInAsync = () => {
     // await AsyncStorage.setItem('userToken', 'abc');
 
     // this.props.navigation.navigate('Main');
@@ -165,9 +170,10 @@ export class SignInScreen extends React.Component {
       loginAccount: this.state.userNameInput,
       loginPwd: this.state.userPassword
     }
+		console.log(formData)
     /*fetch请求*/
     /*const res = fetch('http://10.19.8.22:8100/user/SanyBasicShrUser/login', {
-      method: 'POST',
+      mrethod: 'POST',
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
@@ -179,11 +185,26 @@ export class SignInScreen extends React.Component {
     })*/
     /*fetch封装----*/
     LoginRequest(formData).then(res=> {
-     /* if(res&&res.code===200){
+			console.log(res)
+      if(res&&res.code===200){
+			  storage.save({
+            key: 'loginState',
+						data:res.data,
+            
+            //expires为有效时间
+            expires: 1000 * 3600
+        }) 
+			  //AsyncStorage.setItem('userdata','aa');
+			  console.log(res.data)
+				//console.log(JSON.parse(AS.get('userdata')))
         this.props.navigation.navigate('Main');
-      }*/
-      this.props.navigation.navigate('Main');
+			
+      }else{
+				this.setState({modalVisible:true})
+			}
+      //this.props.navigation.navigate('Main');
     }).catch(res=>{
+			
       // 登录失败时，弹出模态框
       this.setState({modalVisible:true})
     })
@@ -213,7 +234,7 @@ const styles = StyleSheet.create({
     flex: 1, justifyContent: 'center', // 垂直居中
     alignItems: 'center', // 水平居中
   },
-  logoTitle:{ color:'#ffffff',fontSize:18},
+  logoTitle:{ color:'#ffffff',fontSize:18,marginTop:2},
   userIcon:{  position:'absolute', top:height*0.1*0.55,left:10,},
   userIconPwd:{ position:'absolute', top:height*0.1*0.55,left:10,},
   userIconPwdEye:{ position:'absolute', top:height*0.1*0.55,left:width*0.6,zIndex:100},
