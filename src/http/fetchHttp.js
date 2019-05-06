@@ -1,7 +1,7 @@
 let queryString = require('query-string');
 import   {Platform}
  from 'react-native'
-
+import storage from '../storage/RNAsyncStorage'
 const os = Platform.OS;
 
 function checkStatus(response) {
@@ -22,9 +22,20 @@ async function get(url, params) {
   }
   try {
     let headers = new Headers();
-    // let Access_Token = await localStorage.getItem('Access_Token');
+    let Access_Token = await storage.load({
+      key: 'loginState',
+      autoSync: true,
+      syncInBackground: true,
+      syncParams: {
+        extraFetchOptions: {
+        },
+        someFlag: true,
+      },
+    }).then(ret => {
+      return ret.token
+    });
     if (Access_Token) {
-      // headers.append('Access_Token', Access_Token);
+      headers.append('token', Access_Token);
       headers.append('UserAgent',os);
     }
     console.log(headers,url)
@@ -40,13 +51,24 @@ async function get(url, params) {
 }
 
 async function post(url, body) {
-  // let Access_Token = await localStorage.getItem('Access_Token');
+  let Access_Token = await storage.load({
+    key: 'loginState',
+    autoSync: true,
+    syncInBackground: true,
+    syncParams: {
+      extraFetchOptions: {
+      },
+      someFlag: true,
+    },
+  }).then(ret => {
+    return ret.token
+  });
   let fetchOptions = {
     method: 'POST',
     headers: {
       'Accept': 'application/json',
       'Content-Type': 'application/json',
-      // 'Access_Token': Access_Token ? Access_Token : '',
+      'token': Access_Token ? Access_Token : '',
       'UserAgent':os
     },
     body: JSON.stringify(body)
@@ -59,13 +81,24 @@ async function post(url, body) {
 
 
 async function update(url, body) {
-  let Access_Token = await localStorage.getItem('Access_Token');
+  let Access_Token = await storage.load({
+    key: 'loginState',
+    autoSync: true,
+    syncInBackground: true,
+    syncParams: {
+      extraFetchOptions: {
+      },
+      someFlag: true,
+    },
+  }).then(ret => {
+    return ret.token
+  });
   let fetchOptions = {
     method: 'PUT',
     headers: {
       'Accept': 'application/json',
       'Content-Type': 'application/json',
-      'Access_Token': Access_Token ? Access_Token : '',
+      'token': Access_Token ? Access_Token : '',
       'UserAgent':os
     },
     body: JSON.stringify(body)
@@ -76,7 +109,18 @@ async function update(url, body) {
 }
 
 async function uploadFile(url, params, fileUrl,fileName) {
-  let Access_Token = await localStorage.getItem('Access_Token');
+  let Access_Token = await storage.load({
+    key: 'loginState',
+    autoSync: true,
+    syncInBackground: true,
+    syncParams: {
+      extraFetchOptions: {
+      },
+      someFlag: true,
+    },
+  }).then(ret => {
+    return ret.token
+  });
   let data = new FormData();
   data.append('file', {
     uri: fileUrl,
@@ -95,7 +139,7 @@ async function uploadFile(url, params, fileUrl,fileName) {
     method: 'POST',
     headers: {
       'Accept': 'application/json',
-      'Access_Token': Access_Token ? Access_Token : '',
+      'token': Access_Token ? Access_Token : '',
       'UserAgent':os
     },
     body: data

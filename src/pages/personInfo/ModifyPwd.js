@@ -5,6 +5,8 @@ import {
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient'
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import Toast from 'react-native-whc-toast'
+
 import {px2dp} from "../../utils/ScreenUtil";
 import {STATUS_BAR_HEIGHT,HEADER_HEIGHT} from '../../components/Header'
 import Header from '../../components/Header'
@@ -90,7 +92,7 @@ export class ModifyPwdScreen extends React.Component {
                 </View>
               </TouchableOpacity>
             </LinearGradient>
-
+            <Toast ref='toastModify'/>
           </View>
         </View>
       </View>
@@ -118,6 +120,11 @@ export class ModifyPwdScreen extends React.Component {
     );
   }
    _signOutAsync = async () => {
+    const {userNo,oldPwdValue,reNewPwdValue} = this.state
+     if(userNo===''||oldPwdValue===''||reNewPwdValue===''){
+       this.refs.toastModify.show('原始密码或新密码不能为空')
+       return
+     }
     await AsyncStorage.clear();
 
 		 if(!this.state.isShowReNewPwd){

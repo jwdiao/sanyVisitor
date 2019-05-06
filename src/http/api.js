@@ -35,14 +35,15 @@ export const regTelIsExist = (telephone) => fetch.post(BaseUrl+'/user/SanyBasicS
 
 
 // 访客列表---接口
-export const getVisitorList = (pageNum, pageSize) => fetch.post('http://10.88.195.184:1234/sanyBussVisitorApp/getVisitorAllByUser',{
+export const getVisitorList = (pageNum, pageSize) => fetch.post(`${BaseUrl}/visitorcontrol/sanyBussVisitorApp/getVisitorAllByUser`,{
   pageNum: pageNum, // 分页参数，第几页
-  pageSize: pageSize // 分页参数，每页多少条
+  pageSize: pageSize ,// 分页参数，每页多少条
+  query:{},
 })
 // 访客新增---接口
-export const addVisitorObjReq = (addVisitorObj) => fetch.post('http://10.88.195.184:1234/sanyBussVisitorApp/addApplyAndSendHaiKang',addVisitorObj)
+export const addVisitorObjReq = (addVisitorObj) => fetch.post(`${BaseUrl}/visitorcontrol/sanyBussVisitorApp/addApplyAndSendHaiKang`,addVisitorObj)
 // 访客历史拜访列表---接口
-export const getVisitorHistoryReq = (pageNum, pageSize) => fetch.post('http://10.88.195.184:1234/sanyBussVisitorApp/getVisitorHistory',{
+export const getVisitorHistoryReq = (pageNum, pageSize) => fetch.post(`${BaseUrl}/visitorcontrol/sanyBussVisitorApp/getVisitorHistory`,{
   pageNum: pageNum, // 分页参数，第几页
   pageSize: pageSize // 分页参数，每页多少条
 })

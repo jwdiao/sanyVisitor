@@ -1,4 +1,3 @@
-
 import React from 'react';
 import {
   View,
@@ -28,3 +27,7 @@ export const App = () => {
     </Provider>
   )
 }
+
+
+
+

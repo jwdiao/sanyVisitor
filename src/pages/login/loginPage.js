@@ -2,7 +2,7 @@ import React from 'react';
 import {
   AsyncStorage, ImageBackground, Modal,TouchableNativeFeedback,TouchableHighlight,
   Button, Image, ScrollView, TouchableOpacity,
-  View, Text, TextInput, StyleSheet, Dimensions,
+  View, Text, TextInput, StyleSheet, Dimensions,Alert,
   StatusBar
 } from 'react-native';
 // import {BoxShadow} from 'react-native-shadow'
@@ -14,6 +14,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign'
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons'
 import iconfont from '../../../android/app/src/main/assets/fonts/iconfont.ttf'
 
+import  Toast  from 'react-native-whc-toast'
 
 
 import {LoginRequest} from '../../http/api'
@@ -130,6 +131,7 @@ export class SignInScreen extends React.Component {
             <TouchableOpacity onPress={this._signInAsync}>
               <View style={styles.linearGradientView}>
                 <Text style={styles.loginBtn} >登录</Text>
+                <Toast ref='toastLogin'/>
               </View>
             </TouchableOpacity>
           </LinearGradient>
@@ -151,7 +153,6 @@ export class SignInScreen extends React.Component {
                   </View>
                 </TouchableHighlight>
               </LinearGradient>
-
             </View>
           </View>
         </Modal>
@@ -163,13 +164,20 @@ export class SignInScreen extends React.Component {
 
   _signInAsync = () => {
     // await AsyncStorage.setItem('userToken', 'abc');
-
     // this.props.navigation.navigate('Main');
     // this.setState({modalVisible:true})
+
     const formData = {
       loginAccount: this.state.userNameInput,
       loginPwd: this.state.userPassword
     }
+
+    if(formData.loginAccount==='' || formData.loginPwd===''){
+      this.refs.toastLogin.show('用户名或密码不能为空')
+      return
+    }
+
+
 		console.log(formData)
     /*fetch请求*/
     /*const res = fetch('http://10.19.8.22:8100/user/SanyBasicShrUser/login', {
@@ -187,9 +195,11 @@ export class SignInScreen extends React.Component {
     LoginRequest(formData).then(res=> {
 			console.log(res)
       if(res&&res.code===200){
+			  // localStorage.setItem('Access_Token',res.data.token)
 			  storage.save({
             key: 'loginState',
 						data:res.data,
+            tokenData:res.data.token,
             
             //expires为有效时间
             expires: 1000 * 3600
@@ -204,7 +214,6 @@ export class SignInScreen extends React.Component {
 			}
       //this.props.navigation.navigate('Main');
     }).catch(res=>{
-			
       // 登录失败时，弹出模态框
       this.setState({modalVisible:true})
     })
@@ -255,3 +264,4 @@ const styles = StyleSheet.create({
   goBackLogin:{alignItems:'center',borderRadius:25,marginTop:40,},
   goBackLoginView:{width:width*0.6,height:50,justifyContent:'center',alignItems:'center',borderRadius:25,},
 })
+
