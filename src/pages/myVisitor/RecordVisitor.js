@@ -84,15 +84,24 @@ export class RecordVisitorScreen extends React.Component {
       // isChecked: false,
       // visitorList: [],
       dateValue: new Date(),
-      visitCycle: ['上午']
+      visitCycle: ['全天'],
+      DataVlue:[{label:'下午',value:'下午'}], //初始化拜访周期显示的数值
     }
   }
   componentDidMount () {
+    this.setState({
+      visitCycle:new Date(new Date().getFullYear()+'-'+new Date().getMonth()+'-'+new Date().getDate()).getTime()+12*60*60 > new Date().getTime() ? ['全天'] : ['下午'],
+      DataVlue:new Date(new Date().getFullYear()+'-'+new Date().getMonth()+'-'+new Date().getDate()).getTime()+12*60*60 > new Date().getTime() ?
+        [{label:'上午',value:'上午'},{label:'下午',value:'下午'},{label:'全天',value:'全天'}]
+        : [{label:'下午',value:'下午'}]
+    })
+
+
+
     /* let dater = new Date()
     this.setState({
       visitDate: dater.Format('yyyy-MM-dd')
     }) */
-
     // 访客列表获取数据
     /* let visitorData = [
        {
@@ -121,7 +130,6 @@ export class RecordVisitorScreen extends React.Component {
     this.setState({
       visitorList: visitorData
     }) */
-    
   }
  /*  _createDateData() {
     let date = [];
@@ -323,11 +331,11 @@ export class RecordVisitorScreen extends React.Component {
           carNum: '',
           visitReason: '',
           dateValue: new Date(),
-          visitCycle: ['上午']
+          visitCycle: ['全天']
         })
         const initCurrentVisitorObjEmpty = { // 当前新增对象
           visitDate: new Date().Format('yyyy-MM-dd'),
-          visitCycle: ['上午'],
+          visitCycle: ['全天'],
           visitorNum: '',
           carNum: '',
           visitReason: '',
@@ -461,6 +469,8 @@ export class RecordVisitorScreen extends React.Component {
         </TouchableOpacity>
       </View>
     )
+     const {DataVlue} = this.state
+
     return (
     <View style={{flex:1,backgroundColor:'#F3F3F3'}}>
       <ImageBackground source={require('../../assets/images/head_bg2.png')} style={styles.backgroundImage}>          
@@ -500,12 +510,18 @@ export class RecordVisitorScreen extends React.Component {
               <DatePicker
               value={this.state.dateValue}
               mode="date"
-              minDate={new Date(2010,1,1)}
+              minDate={new Date(new Date().getFullYear(),new Date().getMonth(),new Date().getDate())}
               maxDate={new Date(2090,11,31)}
               // onChange={(V)=>this.setState({dateValue:V})}
               format="YYYY-MM-DD"
               onOk={(V)=>this.setState({dateValue:V})}
               // itemStyle={{fontSize:15,height:34,lineHeight:34}}
+              onChange={(val)=>this.setState({
+                visitCycle:new Date(val).getTime()+4*60*60 > new Date().getTime() ? ['全天'] : ['下午'],
+                DataVlue:new Date(val).getTime()+4*60*60 > new Date().getTime() ?
+                  [{label:'上午',value:'上午'},{label:'下午',value:'下午'},{label:'全天',value:'全天'}]
+                  : [{label:'下午',value:'下午'}]
+              })}
               >
                 <CustomChildren></CustomChildren>
               </DatePicker>
@@ -542,7 +558,7 @@ export class RecordVisitorScreen extends React.Component {
             </View> */}
             
             <Picker
-              data={[{label:'上午',value:'上午'},{label:'下午',value:'下午'},{label:'全天',value:'全天'}]}
+              data= {DataVlue}
               cols={1}
               value={this.state.visitCycle}
               onChange={(V)=>this.setState({visitCycle:V})}

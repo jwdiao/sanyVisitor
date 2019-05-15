@@ -222,19 +222,22 @@ export const AppStack = createDrawerNavigator({
   Tabs: {
     screen: TabNavigator,
     navigationOptions: {
-      header: null
+      header: null,
+      drawerLockMode:'locked-closed',  //锁定在其他界面侧滑效果20190509
     }
   },
   VisitorHistory: {
     screen: VisitorHistoryScreen,
     navigationOptions: {
-      header: null
+      header: null,
+      drawerLockMode:'locked-closed'
     }
   },
   RecordVisitor: {
     screen: RecordVisitorScreen,
     navigationOptions: {
-      header: null
+      header: null,
+      drawerLockMode:'locked-closed'
     }
 /*     navigationOptions: ({navigation}) =>{
       return ({
@@ -294,31 +297,36 @@ export const AppStack = createDrawerNavigator({
   EditPeople: {
     screen: EditPeopleScreen,
     navigationOptions: {
-      header: null
+      header: null,
+      drawerLockMode:'locked-closed'
     }
   },
   ModifyPwd: {
     screen: ModifyPwdScreen,
     navigationOptions: {
       title: '修改密码',
-      headerRight: <View />
+      headerRight: <View />,
+      drawerLockMode:'locked-closed'
     }
   },
   ModifyPwdSuccess: {
     screen: ModifyPwdSuccessScreen,
     navigationOptions: {
       title: '修改密码',
-      headerRight: <View />
+      headerRight: <View />,
+      drawerLockMode:'locked-closed'
     }
   },
   Test: {
     screen: TestScreen,
     navigationOptions: {
       header: null,
+      drawerLockMode:'locked-closed'
       // title: '测试页面',
       // headerRight: <View />
     }
   },
+
 
 },
   {
@@ -332,9 +340,16 @@ export const AppStack = createDrawerNavigator({
   },
 
 );
+/*const navigationOptions = ({navigation}) =>({
+  drawerLockMode:'locked-closed'
+})*/
+
 
 export const DrawerNav = createDrawerNavigator({
-  AppStackPage1: { screen:AddVisitorScreen }
+  AppStackPage1: {
+    screen:AddVisitorScreen,
+    navigationOptions:{drawerLockMode:'unlocked'}  // 只有在新增时可以侧滑
+  }
 });
 
 

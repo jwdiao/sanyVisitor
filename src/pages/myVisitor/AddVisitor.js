@@ -15,6 +15,7 @@ import { Button, Drawer, List, WhiteSpace } from '@ant-design/react-native';
 import {px2dp} from "../../utils/ScreenUtil";
 import LinearGradient from 'react-native-linear-gradient';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import  Toast  from 'react-native-whc-toast'
 
 import {connect} from 'react-redux';
 import * as visitorActions from '../../redux/actions/visitorActions'
@@ -65,6 +66,23 @@ export class AddVisitorScreen extends React.Component {
     const cardIdStatus = this.checkCardId(this.state.cardId)
     const carIdStatus = this.checkCarId(this.state.carId)
     // if(uNameStatus&&telStatus&&cardIdStatus&&carIdStatus) {
+    if(this.state.uName === ''){
+      this.refs.toastLogin.show('请输入姓名')
+      return
+    }
+    if(this.state.tel === ''){
+      this.refs.toastLogin.show('请输入电话号码')
+      return
+    }
+    if(this.state.cardId === ''){
+      this.refs.toastLogin.show('请输入身份证号码')
+      return
+    }
+    if(this.state.carId === ''){
+      this.refs.toastLogin.show('请输入车牌号码')
+      return
+    }
+
       let visitorInfoObj = {
         id: '002'+Math.random(),
         uName: this.state.uName,
@@ -91,7 +109,22 @@ export class AddVisitorScreen extends React.Component {
     const cardIdStatus = this.checkCardId(this.state.cardId)
     const carIdStatus = this.checkCarId(this.state.carId)
     // if(uNameStatus&&telStatus&&cardIdStatus&&carIdStatus) {
-
+    if(this.state.uName === ''){
+      this.refs.toastLogin.show('请输入姓名')
+      return
+    }
+    if(this.state.tel === ''){
+      this.refs.toastLogin.show('请输入电话号码')
+      return
+    }
+    if(this.state.cardId === ''){
+      this.refs.toastLogin.show('请输入身份证号码')
+      return
+    }
+    if(this.state.carId === ''){
+      this.refs.toastLogin.show('请输入车牌号码')
+      return
+    }
       let visitorInfoObj = {
         id: '001'+Math.random(),
         uName: this.state.uName,
@@ -360,6 +393,7 @@ export class AddVisitorScreen extends React.Component {
               {!!this.state.carErrorInfo && (<Text style={styles.errorText}>{this.state.carErrorInfo}</Text>)}
             </View>
           </View>
+          <Toast ref='toastLogin'/>
           <View style={styles.addVisitorBtnBox}>
             <TouchableHighlight onPress={this._saveAndAdd} style={styles.addVisitorBtnAddBox}>
               <LinearGradient

@@ -132,7 +132,7 @@ export class MyInfoScreen extends React.Component {
                     <Text style={{fontSize:16,}}>电       话</Text>
                   </View>
                   <View>
-                    <Text style={{fontSize:16,paddingLeft:width*0.25}}>{telNumber}</Text>
+                    <Text style={{fontSize:16,paddingLeft:width*0.20}}>{telNumber}</Text>
                   </View>
                 </View>
                 <View style={[styles.phoneAndChangePwd,{paddingBottom:0,paddingTop:20,}]} >
@@ -179,9 +179,13 @@ export class MyInfoScreen extends React.Component {
              // 而不能在then以外处理
              // 也没有办法“变成”同步返回
              // 你也可以使用“看似”同步的async/await语法
+            var outerIp = 'http://222.240.233.67:8181'    //当外网时使用，目前只能外网访问
              this.setState({telNumber:ret.userNo,
-						 imageURL:ret.imgUrlUpload?ret.imgUrlUpload:urlImg,
+						 imageURL:ret.imgUrlUpload?outerIp.concat(ret.imgUrlUpload.slice(22,ret.imgUrlUpload.length)) : urlImg,
 						 userName:ret.userName,userAccount:ret.userNo});
+
+
+             console.log('imageUrl:',this.state.imageURL)
          }).catch(err => {
              //如果没有找到数据且没有sync方法，
              //或者有其他异常，则在catch中返回

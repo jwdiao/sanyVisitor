@@ -2,7 +2,6 @@
  * 请求拦截、相应拦截、错误统一处理
  */
 import axios from 'axios';
-
 // 请求超时时间
 axios.defaults.timeout = 10000;
 

@@ -171,7 +171,7 @@ export class SignInScreen extends React.Component {
       loginAccount: this.state.userNameInput,
       loginPwd: this.state.userPassword
     }
-
+    //空值验证
     if(formData.loginAccount==='' || formData.loginPwd===''){
       this.refs.toastLogin.show('用户名或密码不能为空')
       return
@@ -192,7 +192,7 @@ export class SignInScreen extends React.Component {
       console.warn('qingqiuchenggong:',responseJSON)
     })*/
     /*fetch封装----*/
-    LoginRequest(formData).then(res=> {
+   /* LoginRequest(formData).then(res=> {
 			console.log(res)
       if(res&&res.code===200){
 			  // localStorage.setItem('Access_Token',res.data.token)
@@ -216,17 +216,25 @@ export class SignInScreen extends React.Component {
     }).catch(res=>{
       // 登录失败时，弹出模态框
       this.setState({modalVisible:true})
-    })
+    })*/
 
     /*axios封装----*/
-     /*LoginRequest(formData).then(res => {
+     LoginRequest(formData).then(res => {
+      storage.save({
+            key: 'loginState',
+						data:res.data,
+            tokenData:res.data.token,
+
+            //expires为有效时间
+            expires: 1000 * 3600
+        })
       this.props.navigation.navigate('Main');
       // console.log('ppp:',res)
     }).catch(res =>{
       // 登录失败时，弹出模态框
       this.setState({modalVisible:true})
        console.log('登录失败')
-    })*/
+    })
 
   };
   _forgetPwd = async () => {

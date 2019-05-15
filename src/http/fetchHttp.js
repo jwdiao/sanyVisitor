@@ -2,6 +2,7 @@ let queryString = require('query-string');
 import   {Platform}
  from 'react-native'
 import storage from '../storage/RNAsyncStorage'
+
 const os = Platform.OS;
 
 function checkStatus(response) {
